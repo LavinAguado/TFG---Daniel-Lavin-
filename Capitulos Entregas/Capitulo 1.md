@@ -1,10 +1,12 @@
-# Índice
-- [Introducción](#introducción)
-- [Justificación](#justificación)
-- [Objetivo general y objetivos específicos](#objetivo-general-y-objetivos-específicos)
-- [Estructura del trabajo](#estructura-del-trabajo)
-- [Metodología y tareas](#metodología-y-tareas)
+<p align="center">
+  <a href="#introducción">📘 Introducción</a> •
+  <a href="#justificación">📗 Justificación</a> •
+  <a href="#objetivo-general-y-objetivos-específicos">🎯 Objetivos</a> •
+  <a href="#estructura-del-trabajo">🧱 Estructura</a> •
+  <a href="#metodología-y-tareas">⚙️ Metodología</a>
+</p>
 
+---
 ---
 
 # Introducción
