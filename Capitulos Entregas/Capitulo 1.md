@@ -1,12 +1,27 @@
 <p align="center">
-  <a href="#introducción">📘 Introducción</a> •
-  <a href="#justificación">📗 Justificación</a> •
-  <a href="#objetivo-general-y-objetivos-específicos">🎯 Objetivos</a> •
-  <a href="#estructura-del-trabajo">🧱 Estructura</a> •
-  <a href="#metodología-y-tareas">⚙️ Metodología</a>
+
+<a href="#introducción">
+  <img src="https://img.shields.io/badge/Introducción-1f2937?style=for-the-badge&logo=bookstack&logoColor=white">
+</a>
+
+<a href="#justificación">
+  <img src="https://img.shields.io/badge/Justificación-374151?style=for-the-badge&logo=readme&logoColor=white">
+</a>
+
+<a href="#objetivo-general-y-objetivos-específicos">
+  <img src="https://img.shields.io/badge/Objetivos-4b5563?style=for-the-badge&logo=target&logoColor=white">
+</a>
+
+<a href="#estructura-del-trabajo">
+  <img src="https://img.shields.io/badge/Estructura-6b7280?style=for-the-badge&logo=grid&logoColor=white">
+</a>
+
+<a href="#metodología-y-tareas">
+  <img src="https://img.shields.io/badge/Metodología-9ca3af?style=for-the-badge&logo=gear&logoColor=white">
+</a>
+
 </p>
 
----
 ---
 
 # Introducción
