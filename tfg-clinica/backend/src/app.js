@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 // Aquí se importarán y usarán las rutas
-// const indexRoutes = require('./routes/index');
-// app.use('/api', indexRoutes);
+const pacientesRoutes = require('./routes/pacientesRoutes');
+app.use('/api', pacientesRoutes);
 
 module.exports = app;
