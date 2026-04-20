@@ -10,6 +10,7 @@ app.use(express.json());
 // Rutas
 const authRoutes = require('./routes/authRoutes');
 const pacientesRoutes = require('./routes/pacientesRoutes');
+const citasRoutes = require('./routes/citasRoutes');
 const { verificarToken } = require('./middleware/authMiddleware');
 
 // Rutas públicas (no requieren token)
@@ -17,5 +18,6 @@ app.use('/api/auth', authRoutes);
 
 // Rutas protegidas (requieren token JWT)
 app.use('/api', verificarToken, pacientesRoutes);
+app.use('/api', verificarToken, citasRoutes);
 
 module.exports = app;

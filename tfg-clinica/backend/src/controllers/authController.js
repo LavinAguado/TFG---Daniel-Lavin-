@@ -23,8 +23,8 @@ const register = async (req, res) => {
 
     const rolesValidos = ['admin', 'fisio', 'entrenador'];
     if (!rol || !rolesValidos.includes(rol)) {
-      return res.status(400).json({ 
-        error: `El rol debe ser uno de: ${rolesValidos.join(', ')}` 
+      return res.status(400).json({
+        error: `El rol debe ser uno de: ${rolesValidos.join(', ')}`
       });
     }
 
@@ -105,7 +105,7 @@ const login = async (req, res) => {
     const token = jwt.sign(
       { id: usuario.id, email: usuario.email, rol: usuario.rol },
       process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: '8h' }
     );
 
     return res.status(200).json({
