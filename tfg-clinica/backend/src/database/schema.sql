@@ -21,14 +21,15 @@ DROP TABLE IF EXISTS usuarios              CASCADE;
 
 -- ──────────────────────────────────────────────────────────
 -- 1. USUARIOS
---    Profesionales de la clínica: admin, fisio, entrenador
+--    Profesionales de la clínica: superadmin, admin (con tipo fisio/entrenador)
 -- ──────────────────────────────────────────────────────────
 CREATE TABLE usuarios (
   id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   nombre      VARCHAR(150)  NOT NULL,
   email       VARCHAR(200)  NOT NULL UNIQUE,
   password    VARCHAR(255)  NOT NULL,
-  rol         VARCHAR(20)   NOT NULL CHECK (rol IN ('admin', 'fisio', 'entrenador')),
+  rol         VARCHAR(20)   NOT NULL CHECK (rol IN ('superadmin', 'admin')),
+  tipo        VARCHAR(50)   NULL,
   created_at  TIMESTAMPTZ   NOT NULL DEFAULT NOW()
 );
 
@@ -88,7 +89,7 @@ CREATE TABLE ejercicios (
 -- ──────────────────────────────────────────────────────────
 -- 6. ENTRENAMIENTOS
 --    Sesión de entrenamiento asignada a un paciente
---    por un profesional (fisio o entrenador).
+--    por un administrador profesional (fisio o entrenador).
 -- ──────────────────────────────────────────────────────────
 CREATE TABLE entrenamientos (
   id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

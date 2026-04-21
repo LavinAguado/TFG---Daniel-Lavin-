@@ -16,8 +16,8 @@ const getCitas = async (req, res) => {
       `)
       .order('fecha', { ascending: true });
 
-    // Si el usuario NO es admin, solo ve sus propias citas
-    if (req.user.rol !== 'admin') {
+    // Si el usuario NO es superadmin, solo ve sus propias citas
+    if (req.user.rol !== 'superadmin') {
       query = query.eq('usuario_id', req.user.id);
     }
 
