@@ -1,4 +1,5 @@
 const { supabase } = require('../config/supabase');
+const { generateEntrenamientoPDF } = require('../utils/pdfGenerator');
 
 // IMPORTANTE: En una fase posterior se implementará Row Level Security (RLS) 
 // para restringir acceso a nivel de base de datos.
@@ -138,8 +139,84 @@ const getEntrenamientos = async (req, res) => {
   }
 };
 
+/**
+ * getEntrenamientoPDF
+ * 
+ * Genera y devuelve un PDF con los datos completos de un entrenamiento.
+ * 
+ * Seguridad:
+ * - admin: solo puede generar PDF de entrenamientos que le pertenecen (usuario_id)
+ * - superadmin: puede generar PDF de cualquier entrenamiento
+ * 
+ * IMPORTANTE: Este PDF será entregado al paciente como guía de su plan.
+ * FUTURO: Preparado para integración con envío por email (nodemailer).
+ */
+const getEntrenamientoPDF = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    console.log(`📄 [PDF] Solicitud de PDF para entrenamiento ID: ${id} por usuario: ${req.user.email} (${req.user.rol})`);
+
+    if (!id) {
+      return res.status(400).json({ error: 'Se requiere el ID del entrenamiento' });
+    }
+
+    // Obtener entrenamiento con todas las relaciones necesarias
+    const { data: entrenamiento, error } = await supabase
+      .from('entrenamientos')
+      .select(`
+        *,
+        pacientes (id, nombre, apellidos, email),
+        usuarios (id, nombre, rol),
+        entrenamiento_ejercicios (
+          id, series, repeticiones, esfuerzo,
+          ejercicios (id, nombre, descripcion)
+        )
+      `)
+      .eq('id', id)
+      .single();
+
+    if (error || !entrenamiento) {
+      console.error('❌ [PDF] Entrenamiento no encontrado:', error?.message);
+      return res.status(404).json({ error: 'Entrenamiento no encontrado' });
+    }
+
+    // Seguridad: admin solo puede acceder a sus propios entrenamientos
+    if (req.user.rol !== 'superadmin' && entrenamiento.usuario_id !== req.user.id) {
+      console.warn(`🛡️ [PDF] Acceso denegado: usuario ${req.user.id} intentó acceder al entrenamiento ${id} (propietario: ${entrenamiento.usuario_id})`);
+      return res.status(403).json({ error: 'No tienes permiso para acceder a este entrenamiento' });
+    }
+
+    // Generar el PDF
+    console.log('📄 [PDF] Generando PDF...');
+    const pdfBuffer = await generateEntrenamientoPDF(entrenamiento);
+
+    // Configurar headers de respuesta para descarga de PDF
+    const nombrePaciente = entrenamiento.pacientes
+      ? `${entrenamiento.pacientes.nombre}_${entrenamiento.pacientes.apellidos}`.replace(/\s+/g, '_')
+      : 'paciente';
+    const fechaCorta = entrenamiento.fecha
+      ? new Date(entrenamiento.fecha).toISOString().split('T')[0]
+      : 'sin_fecha';
+    const filename = `entrenamiento_${nombrePaciente}_${fechaCorta}.pdf`;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Length', pdfBuffer.length);
+
+    console.log(`✅ [PDF] PDF enviado: ${filename} (${(pdfBuffer.length / 1024).toFixed(1)} KB)`);
+
+    return res.send(pdfBuffer);
+
+  } catch (err) {
+    console.error('❌ [PDF] Error inesperado en getEntrenamientoPDF:', err);
+    return res.status(500).json({ error: 'Error interno al generar el PDF' });
+  }
+};
+
 module.exports = {
   createEntrenamiento,
   addEjercicioAEntrenamiento,
-  getEntrenamientos
+  getEntrenamientos,
+  getEntrenamientoPDF
 };
