@@ -13,10 +13,12 @@ const pacientesRoutes = require('./routes/pacientesRoutes');
 const citasRoutes = require('./routes/citasRoutes');
 const ejerciciosRoutes = require('./routes/ejerciciosRoutes');
 const entrenamientosRoutes = require('./routes/entrenamientosRoutes');
+const seguimientoRoutes = require('./routes/seguimientoRoutes');
 const { verificarToken } = require('./middleware/authMiddleware');
 
-// Rutas públicas (no requieren token)
+// Rutas públicas (no requieren token o manejan su propia seguridad pública)
 app.use('/api/auth', authRoutes);
+app.use('/api', seguimientoRoutes);
 
 // Rutas protegidas (requieren token JWT)
 app.use('/api', verificarToken, pacientesRoutes);
