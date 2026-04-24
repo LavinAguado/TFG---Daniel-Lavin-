@@ -14,6 +14,7 @@ const citasRoutes = require('./routes/citasRoutes');
 const ejerciciosRoutes = require('./routes/ejerciciosRoutes');
 const entrenamientosRoutes = require('./routes/entrenamientosRoutes');
 const seguimientoRoutes = require('./routes/seguimientoRoutes');
+const resumenRoutes = require('./routes/resumenRoutes');
 const { verificarToken } = require('./middleware/authMiddleware');
 
 // Rutas públicas (no requieren token o manejan su propia seguridad pública)
@@ -25,5 +26,6 @@ app.use('/api', verificarToken, pacientesRoutes);
 app.use('/api', verificarToken, citasRoutes);
 app.use('/api', verificarToken, ejerciciosRoutes);
 app.use('/api', verificarToken, entrenamientosRoutes);
+app.use('/api', verificarToken, resumenRoutes);
 
 module.exports = app;
