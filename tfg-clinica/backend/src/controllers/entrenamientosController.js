@@ -164,12 +164,19 @@ const getEntrenamientoPDF = async (req, res) => {
             SELECT json_agg(json_build_object(
               'id', ee.id, 'series', ee.series, 'repeticiones', ee.repeticiones, 'esfuerzo', ee.esfuerzo,
               'ejercicios', json_build_object('id', ej.id, 'nombre', ej.nombre, 'descripcion', ej.descripcion, 'video_url', ej.video_url)
-
             ))
             FROM entrenamiento_ejercicios ee
             JOIN ejercicios ej ON ee.ejercicio_id = ej.id
             WHERE ee.entrenamiento_id = e.id
-          ) as entrenamiento_ejercicios
+          ) as entrenamiento_ejercicios,
+          (
+            SELECT json_build_object('fecha', c.fecha, 'profesional', cu.nombre)
+            FROM citas c
+            JOIN usuarios cu ON c.usuario_id = cu.id
+            WHERE c.paciente_id = e.paciente_id AND c.fecha >= NOW()
+            ORDER BY c.fecha ASC
+            LIMIT 1
+          ) as proxima_cita
         FROM entrenamientos e
         LEFT JOIN pacientes p ON e.paciente_id = p.id
         LEFT JOIN usuarios u ON e.usuario_id = u.id
@@ -178,6 +185,7 @@ const getEntrenamientoPDF = async (req, res) => {
       const resQuery = await client.query(query, [id]);
       return resQuery.rows[0];
     });
+
 
     if (!entrenamiento) {
       return res.status(404).json({ error: 'Entrenamiento no encontrado o acceso denegado' });
