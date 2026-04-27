@@ -10,6 +10,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- ──────────────────────────────────────────────────────────
 -- LIMPIEZA (orden inverso al de creación por las FK)
 -- ──────────────────────────────────────────────────────────
+DROP TABLE IF EXISTS seguimiento_ejercicios CASCADE;
 DROP TABLE IF EXISTS seguimiento           CASCADE;
 DROP TABLE IF EXISTS entrenamiento_ejercicios CASCADE;
 DROP TABLE IF EXISTS entrenamientos        CASCADE;
@@ -130,7 +131,22 @@ CREATE TABLE seguimiento (
 );
 
 -- ──────────────────────────────────────────────────────────
--- 9. ARCHIVOS DE PACIENTE
+-- 9. SEGUIMIENTO_EJERCICIOS
+--    Detalle por ejercicio dentro de un seguimiento:
+--    esfuerzo real, dificultad y comentario del paciente.
+-- ──────────────────────────────────────────────────────────
+CREATE TABLE seguimiento_ejercicios (
+  id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  seguimiento_id UUID        NOT NULL REFERENCES seguimiento(id) ON DELETE CASCADE,
+  ejercicio_id   UUID        NOT NULL REFERENCES ejercicios(id),
+  esfuerzo_real  INT         CHECK (esfuerzo_real BETWEEN 0 AND 10),
+  dificultad     INT         CHECK (dificultad BETWEEN 0 AND 10),
+  comentario     TEXT,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- ──────────────────────────────────────────────────────────
+-- 10. ARCHIVOS DE PACIENTE
 --    Documentos, informes y pruebas almacenadas en Supabase Storage.
 -- ──────────────────────────────────────────────────────────
 CREATE TABLE archivos_paciente (
@@ -153,6 +169,8 @@ CREATE INDEX idx_entreno_usuario      ON entrenamientos(usuario_id);
 CREATE INDEX idx_entreno_ej_entreno   ON entrenamiento_ejercicios(entrenamiento_id);
 CREATE INDEX idx_entreno_ej_ejercicio ON entrenamiento_ejercicios(ejercicio_id);
 CREATE INDEX idx_seguimiento_entreno  ON seguimiento(entrenamiento_id);
+CREATE INDEX idx_seg_ej_seguimiento   ON seguimiento_ejercicios(seguimiento_id);
+CREATE INDEX idx_seg_ej_ejercicio     ON seguimiento_ejercicios(ejercicio_id);
 CREATE INDEX idx_archivos_paciente    ON archivos_paciente(paciente_id);
 
 -- ──────────────────────────────────────────────────────────
@@ -168,6 +186,7 @@ ALTER TABLE ejercicios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE entrenamientos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE entrenamiento_ejercicios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE seguimiento ENABLE ROW LEVEL SECURITY;
+ALTER TABLE seguimiento_ejercicios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE archivos_paciente ENABLE ROW LEVEL SECURITY;
 
 -- Forzar RLS para todos los roles (incluyendo propietarios de tabla)
@@ -179,6 +198,7 @@ ALTER TABLE ejercicios FORCE ROW LEVEL SECURITY;
 ALTER TABLE entrenamientos FORCE ROW LEVEL SECURITY;
 ALTER TABLE entrenamiento_ejercicios FORCE ROW LEVEL SECURITY;
 ALTER TABLE seguimiento FORCE ROW LEVEL SECURITY;
+ALTER TABLE seguimiento_ejercicios FORCE ROW LEVEL SECURITY;
 ALTER TABLE archivos_paciente FORCE ROW LEVEL SECURITY;
 
 -- Funciones para obtener contexto del usuario (Backend Node.js Integration)
@@ -212,7 +232,14 @@ CREATE POLICY entrenamientos_admin ON entrenamientos FOR ALL USING (usuario_id =
 -- Políticas de Seguimiento y Ejercicios (Herencia de acceso)
 CREATE POLICY seguimiento_access ON seguimiento FOR ALL USING (EXISTS (SELECT 1 FROM entrenamientos e WHERE e.id = entrenamiento_id));
 CREATE POLICY entreno_ej_access ON entrenamiento_ejercicios FOR ALL USING (EXISTS (SELECT 1 FROM entrenamientos e WHERE e.id = entrenamiento_id));
+CREATE POLICY seguimiento_ej_access ON seguimiento_ejercicios FOR ALL USING (
+  EXISTS (
+    SELECT 1
+    FROM seguimiento s
+    JOIN entrenamientos e ON e.id = s.entrenamiento_id
+    WHERE s.id = seguimiento_id
+  )
+);
 
 -- Políticas de Archivos
 CREATE POLICY archivos_access ON archivos_paciente FOR ALL USING (get_current_user_role() IN ('superadmin', 'admin'));
-
