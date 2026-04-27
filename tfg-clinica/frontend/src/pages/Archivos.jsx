@@ -84,7 +84,7 @@ const Archivos = () => {
     <div className="space-y-8">
       <header>
         <h1 className="text-3xl font-bold text-slate-800">Repositorio de Archivos</h1>
-        <p className="text-slate-500 mt-1">Almacenamiento seguro de informes, radiografas y documentos clnicos</p>
+        <p className="text-slate-500 mt-1">Almacenamiento seguro de informes, radiografías y documentos clínicos</p>
       </header>
 
       <div className="card max-w-xl">
@@ -151,7 +151,7 @@ const Archivos = () => {
             <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 flex items-start">
               <InformationCircleIcon className="w-5 h-5 text-amber-500 mr-3 mt-0.5" />
               <p className="text-xs text-amber-800 leading-relaxed">
-                <strong>Nota de seguridad:</strong> Los archivos se almacenan en un bucket privado. Solo puedes acceder a ellos mediante URLs temporales firmadas que expiran automticamente.
+                <strong>Nota de seguridad:</strong> Los archivos se almacenan en un bucket privado. Solo puedes acceder a ellos mediante URLs temporales firmadas que expiran automáticamente.
               </p>
             </div>
           </div>

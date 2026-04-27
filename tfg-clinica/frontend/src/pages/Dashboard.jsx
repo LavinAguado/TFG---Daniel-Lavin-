@@ -3,7 +3,7 @@ const Dashboard = () => {
     <div>
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-slate-800">Panel de Control</h1>
-        <p className="text-slate-500 mt-1">Resumen general de la actividad de la clnica</p>
+        <p className="text-slate-500 mt-1">Resumen general de la actividad de la clínica</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
@@ -51,11 +51,11 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="card">
-          <h3 className="text-lg font-bold text-slate-800 mb-6">Prximas Citas</h3>
+          <h3 className="text-lg font-bold text-slate-800 mb-6">Próximas Citas</h3>
           <div className="space-y-4">
             {[
-              { id: 1, name: 'Juan Prez', time: '10:30 AM', type: 'Fisioterapia' },
-              { id: 2, name: 'Mara Garca', time: '11:15 AM', type: 'Evaluacin' },
+              { id: 1, name: 'Juan Pérez', time: '10:30 AM', type: 'Fisioterapia' },
+              { id: 2, name: 'María García', time: '11:15 AM', type: 'Evaluación' },
               { id: 3, name: 'Roberto S.', time: '12:00 PM', type: 'Entrenamiento' },
             ].map(cita => (
               <div key={cita.id} className="flex items-center p-3 hover:bg-slate-50 rounded-xl transition-all cursor-pointer border border-transparent hover:border-slate-100">
