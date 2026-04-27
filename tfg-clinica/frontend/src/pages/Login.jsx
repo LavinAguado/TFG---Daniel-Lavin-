@@ -18,7 +18,7 @@ const Login = () => {
       localStorage.setItem('token', response.data.token);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al iniciar sesin');
+      setError(err.response?.data?.error || 'Error al iniciar sesión');
     } finally {
       setLoading(false);
     }
@@ -46,7 +46,7 @@ const Login = () => {
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="label">Correo Electrnico</label>
+              <label className="label">Correo Electrónico</label>
               <input
                 type="email"
                 className="input"
@@ -58,7 +58,7 @@ const Login = () => {
             </div>
             
             <div>
-              <label className="label">Contrasea</label>
+              <label className="label">Contraseña</label>
               <input
                 type="password"
                 className="input"
@@ -74,7 +74,7 @@ const Login = () => {
               disabled={loading}
               className="w-full btn-primary py-3 text-lg font-bold mt-4"
             >
-              {loading ? 'Iniciando...' : 'Iniciar Sesin'}
+              {loading ? 'Iniciando...' : 'Iniciar Sesión'}
             </button>
           </form>
         </div>

@@ -11,6 +11,7 @@ ALTER TABLE ejercicios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE entrenamientos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE entrenamiento_ejercicios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE seguimiento ENABLE ROW LEVEL SECURITY;
+ALTER TABLE seguimiento_ejercicios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE archivos_paciente ENABLE ROW LEVEL SECURITY;
 
 -- 2. Funciones auxiliares para obtener contexto del usuario desde la sesión
@@ -84,6 +85,18 @@ CREATE POLICY seguimiento_access ON seguimiento
 -- Todos los profesionales pueden gestionar archivos de pacientes.
 CREATE POLICY archivos_profesionales_all ON archivos_paciente
   FOR ALL USING (get_current_user_role() IN ('superadmin', 'admin'));
+
+-- 9.b POLÍTICAS PARA 'seguimiento_ejercicios'
+-- Acceso heredado desde el seguimiento y su entrenamiento padre.
+CREATE POLICY seguimiento_ej_access ON seguimiento_ejercicios
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1
+      FROM seguimiento s
+      JOIN entrenamientos e ON e.id = s.entrenamiento_id
+      WHERE s.id = seguimiento_id
+    )
+  );
 
 -- 10. POLÍTICAS PARA 'ejercicios'
 -- Catálogo de ejercicios: lectura para todos, gestión para superadmin.
