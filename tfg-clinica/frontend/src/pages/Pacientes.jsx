@@ -84,10 +84,10 @@ const Pacientes = () => {
             </div>
             <div>
               <label className="label">Apellidos</label>
-              <input type="text" className="input" placeholder="Ej. Garca Martnez" value={apellidos} onChange={(e) => setApellidos(e.target.value)} required />
+              <input type="text" className="input" placeholder="Ej. García Martínez" value={apellidos} onChange={(e) => setApellidos(e.target.value)} required />
             </div>
             <div className="md:col-span-2">
-              <label className="label">Correo Electrnico</label>
+              <label className="label">Correo Electrónico</label>
               <input type="email" className="input" placeholder="carlos@correo.com" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div className="md:col-span-2 flex justify-end space-x-3 mt-2">
