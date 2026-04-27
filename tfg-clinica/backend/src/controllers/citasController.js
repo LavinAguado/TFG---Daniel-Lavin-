@@ -1,91 +1,117 @@
-const { supabase } = require('../config/supabase');
-
-// IMPORTANTE: En la fase final se implementará Row Level Security (RLS) en Supabase
-// para restringir el acceso a las citas a nivel de base de datos.
-// Actualmente la restricción se realiza únicamente a nivel de middleware en Express.
-// RLS es un paso pendiente crítico.
+const { runInUserContext } = require('../config/dbUtils');
 
 const getCitas = async (req, res) => {
   try {
-    let query = supabase
-      .from('citas')
-      .select(`
-        *,
-        pacientes (id, nombre, apellidos, email),
-        usuarios (id, nombre, email, rol)
-      `)
-      .order('fecha', { ascending: true });
-
-    // Si el usuario NO es superadmin, solo ve sus propias citas
-    if (req.user.rol !== 'superadmin') {
-      query = query.eq('usuario_id', req.user.id);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('Error al obtener citas:', error);
-      return res.status(500).json({ error: error.message });
-    }
-
+    const data = await runInUserContext(req.user, async (client) => {
+      const query = `
+        SELECT 
+          c.*,
+          json_build_object('id', p.id, 'nombre', p.nombre, 'apellidos', p.apellidos, 'email', p.email) as pacientes,
+          json_build_object('id', u.id, 'nombre', u.nombre, 'email', u.email, 'rol', u.rol) as usuarios
+        FROM citas c
+        LEFT JOIN pacientes p ON c.paciente_id = p.id
+        LEFT JOIN usuarios u ON c.usuario_id = u.id
+        ORDER BY c.fecha ASC
+      `;
+      const resQuery = await client.query(query);
+      return resQuery.rows;
+    });
     return res.status(200).json(data);
   } catch (err) {
-    console.error('Error inesperado en getCitas:', err);
+    console.error('Error en getCitas:', err);
     return res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
 const createCita = async (req, res) => {
   try {
-    const { paciente_id, fecha, estado } = req.body;
+    const { paciente_id, fecha, estado, comentarios } = req.body;
+    if (!paciente_id || !fecha) return res.status(400).json({ error: 'paciente_id y fecha son obligatorios' });
 
-    // Validaciones
-    if (!paciente_id) {
-      return res.status(400).json({ error: 'El campo paciente_id es obligatorio' });
-    }
-    if (!fecha) {
-      return res.status(400).json({ error: 'El campo fecha es obligatorio' });
-    }
+    const data = await runInUserContext(req.user, async (client) => {
+      const checkP = await client.query('SELECT id FROM pacientes WHERE id = $1', [paciente_id]);
+      if (checkP.rows.length === 0) throw new Error('PATIENT_NOT_FOUND');
 
-    // Verificar que el paciente existe
-    const { data: paciente, error: errorPaciente } = await supabase
-      .from('pacientes')
-      .select('id')
-      .eq('id', paciente_id)
-      .single();
+      const query = `
+        INSERT INTO citas (paciente_id, usuario_id, fecha, estado, comentarios)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING *
+      `;
+      const resInsert = await client.query(query, [paciente_id, req.user.id, fecha, estado || 'pendiente', comentarios]);
+      const citaId = resInsert.rows[0].id;
 
-    if (errorPaciente || !paciente) {
-      return res.status(404).json({ error: 'El paciente indicado no existe' });
-    }
-
-    // usuario_id se toma del token JWT (el usuario autenticado)
-    const { data, error } = await supabase
-      .from('citas')
-      .insert([{
-        paciente_id,
-        usuario_id: req.user.id,
-        fecha,
-        estado: estado || 'pendiente'
-      }])
-      .select(`
-        *,
-        pacientes (id, nombre, apellidos),
-        usuarios (id, nombre, rol)
-      `);
-
-    if (error) {
-      console.error('Error al crear cita:', error);
-      return res.status(500).json({ error: error.message });
-    }
-
-    return res.status(201).json(data[0]);
+      const resFull = await client.query(`
+        SELECT c.*, 
+               json_build_object('id', p.id, 'nombre', p.nombre, 'apellidos', p.apellidos) as pacientes,
+               json_build_object('id', u.id, 'nombre', u.nombre, 'rol', u.rol) as usuarios
+        FROM citas c
+        LEFT JOIN pacientes p ON c.paciente_id = p.id
+        LEFT JOIN usuarios u ON c.usuario_id = u.id
+        WHERE c.id = $1
+      `, [citaId]);
+      return resFull.rows[0];
+    });
+    return res.status(201).json(data);
   } catch (err) {
-    console.error('Error inesperado en createCita:', err);
+    if (err.message === 'PATIENT_NOT_FOUND') return res.status(404).json({ error: 'Paciente no encontrado' });
+    console.error('Error en createCita:', err);
     return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+const updateCita = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { fecha, estado, comentarios } = req.body;
+
+    const data = await runInUserContext(req.user, async (client) => {
+      const query = `
+        UPDATE citas 
+        SET fecha = COALESCE($1, fecha), 
+            estado = COALESCE($2, estado), 
+            comentarios = COALESCE($3, comentarios)
+        WHERE id = $4
+        RETURNING *
+      `;
+      const resUpdate = await client.query(query, [fecha, estado, comentarios, id]);
+      if (resUpdate.rowCount === 0) throw new Error('CITA_NOT_FOUND');
+      
+      const resFull = await client.query(`
+        SELECT c.*, 
+               json_build_object('id', p.id, 'nombre', p.nombre, 'apellidos', p.apellidos) as pacientes
+        FROM citas c
+        LEFT JOIN pacientes p ON c.paciente_id = p.id
+        WHERE c.id = $1
+      `, [id]);
+      return resFull.rows[0];
+    });
+    return res.status(200).json(data);
+  } catch (err) {
+    if (err.message === 'CITA_NOT_FOUND') return res.status(404).json({ error: 'Cita no encontrada' });
+    console.error('Error en updateCita:', err);
+    return res.status(500).json({ error: 'Error al actualizar cita' });
+  }
+};
+
+const deleteCita = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await runInUserContext(req.user, async (client) => {
+      const result = await client.query('DELETE FROM citas WHERE id = $1', [id]);
+      if (result.rowCount === 0) throw new Error('CITA_NOT_FOUND');
+    });
+    return res.status(200).json({ message: 'Cita eliminada correctamente' });
+  } catch (err) {
+    if (err.message === 'CITA_NOT_FOUND') return res.status(404).json({ error: 'Cita no encontrada' });
+    console.error('Error en deleteCita:', err);
+    return res.status(500).json({ error: 'Error al eliminar cita' });
   }
 };
 
 module.exports = {
   getCitas,
-  createCita
+  createCita,
+  updateCita,
+  deleteCita
 };
+

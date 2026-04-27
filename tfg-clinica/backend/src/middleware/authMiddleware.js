@@ -29,24 +29,28 @@ const soloSuperadmin = (req, res, next) => {
 };
 
 const soloAdmin = (req, res, next) => {
-  if (!req.user || req.user.rol !== 'admin') {
-    return res.status(403).json({ error: 'Acceso denegado: requiere privilegios de admin' });
+  if (!req.user || (req.user.rol !== 'admin' && req.user.rol !== 'superadmin')) {
+    return res.status(403).json({ error: 'Acceso denegado: requiere privilegios de admin o superadmin' });
   }
   next();
 };
 
-// Mantiene compatibilidad con verificarRol genérico si se necesita
+
 const verificarRol = (...rolesPermitidos) => {
   return (req, res, next) => {
     if (!req.user) {
+      console.log('🛡️ Auth: No user in request');
       return res.status(401).json({ error: 'Acceso denegado: no autenticado' });
     }
+    console.log(`🛡️ Auth: Checking role ${req.user.rol} against [${rolesPermitidos.join(', ')}]`);
     if (!rolesPermitidos.includes(req.user.rol)) {
+      console.log('🛡️ Auth: Role not permitted');
       return res.status(403).json({ error: 'Acceso denegado: no tienes permisos suficientes' });
     }
     next();
   };
 };
+
 
 module.exports = {
   verificarToken,

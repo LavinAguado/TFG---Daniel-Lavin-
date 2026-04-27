@@ -6,50 +6,82 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
+    setLoading(true);
     try {
       const response = await api.post('/auth/login', { email, password });
-      const { token } = response.data;
-      if (token) {
-        localStorage.setItem('token', token);
-        navigate('/dashboard');
-      }
+      localStorage.setItem('token', response.data.token);
+      navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Error al iniciar sesión');
+      setError(err.response?.data?.error || 'Error al iniciar sesin');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h2>Iniciar Sesión</h2>
-        {error && <div className="error-message">{error}</div>}
-        <form onSubmit={handleLogin}>
-          <div className="form-group">
-            <label>Email</label>
-            <input 
-              type="email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              required 
-            />
-          </div>
-          <div className="form-group">
-            <label>Contraseña</label>
-            <input 
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
-            />
-          </div>
-          <button type="submit" className="btn-primary">Entrar</button>
-        </form>
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-extrabold text-sky-600 tracking-tight mb-2">TheraTrack</h1>
+          <p className="text-slate-500 font-medium">Gestión de salud deportiva inteligente</p>
+        </div>
+
+        <div className="bg-white p-8 rounded-2xl shadow-xl shadow-sky-900/5 border border-slate-100">
+          <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">Bienvenido de nuevo</h2>
+          
+          {error && (
+            <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium mb-6 flex items-center">
+              <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label className="label">Correo Electrnico</label>
+              <input
+                type="email"
+                className="input"
+                placeholder="ejemplo@clinica.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            
+            <div>
+              <label className="label">Contrasea</label>
+              <input
+                type="password"
+                className="input"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full btn-primary py-3 text-lg font-bold mt-4"
+            >
+              {loading ? 'Iniciando...' : 'Iniciar Sesin'}
+            </button>
+          </form>
+        </div>
+        
+        <p className="text-center text-slate-400 text-sm mt-8">
+          &copy; 2026 TheraTrack Systems. Todos los derechos reservados.
+        </p>
       </div>
     </div>
   );

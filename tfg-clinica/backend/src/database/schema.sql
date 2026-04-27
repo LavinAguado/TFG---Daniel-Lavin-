@@ -130,6 +130,18 @@ CREATE TABLE seguimiento (
 );
 
 -- ──────────────────────────────────────────────────────────
+-- 9. ARCHIVOS DE PACIENTE
+--    Documentos, informes y pruebas almacenadas en Supabase Storage.
+-- ──────────────────────────────────────────────────────────
+CREATE TABLE archivos_paciente (
+  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  paciente_id  UUID         NOT NULL REFERENCES pacientes(id) ON DELETE CASCADE,
+  nombre       VARCHAR(255) NOT NULL,
+  path         TEXT         NOT NULL,
+  created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+-- ──────────────────────────────────────────────────────────
 -- ÍNDICES (para mejorar rendimiento en consultas frecuentes)
 -- ──────────────────────────────────────────────────────────
 CREATE INDEX idx_historial_paciente   ON historial_clinico(paciente_id);
@@ -141,16 +153,66 @@ CREATE INDEX idx_entreno_usuario      ON entrenamientos(usuario_id);
 CREATE INDEX idx_entreno_ej_entreno   ON entrenamiento_ejercicios(entrenamiento_id);
 CREATE INDEX idx_entreno_ej_ejercicio ON entrenamiento_ejercicios(ejercicio_id);
 CREATE INDEX idx_seguimiento_entreno  ON seguimiento(entrenamiento_id);
+CREATE INDEX idx_archivos_paciente    ON archivos_paciente(paciente_id);
 
 -- ──────────────────────────────────────────────────────────
--- VERIFICACIÓN FINAL
+-- 10. SEGURIDAD — ROW LEVEL SECURITY (RLS)
 -- ──────────────────────────────────────────────────────────
-SELECT
-  table_name,
-  (SELECT COUNT(*) FROM information_schema.columns c
-   WHERE c.table_name = t.table_name
-     AND c.table_schema = 'public') AS num_columnas
-FROM information_schema.tables t
-WHERE table_schema = 'public'
-  AND table_type = 'BASE TABLE'
-ORDER BY table_name;
+
+-- Habilitar RLS
+ALTER TABLE usuarios ENABLE ROW LEVEL SECURITY;
+ALTER TABLE pacientes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE historial_clinico ENABLE ROW LEVEL SECURITY;
+ALTER TABLE citas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ejercicios ENABLE ROW LEVEL SECURITY;
+ALTER TABLE entrenamientos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE entrenamiento_ejercicios ENABLE ROW LEVEL SECURITY;
+ALTER TABLE seguimiento ENABLE ROW LEVEL SECURITY;
+ALTER TABLE archivos_paciente ENABLE ROW LEVEL SECURITY;
+
+-- Forzar RLS para todos los roles (incluyendo propietarios de tabla)
+ALTER TABLE usuarios FORCE ROW LEVEL SECURITY;
+ALTER TABLE pacientes FORCE ROW LEVEL SECURITY;
+ALTER TABLE historial_clinico FORCE ROW LEVEL SECURITY;
+ALTER TABLE citas FORCE ROW LEVEL SECURITY;
+ALTER TABLE ejercicios FORCE ROW LEVEL SECURITY;
+ALTER TABLE entrenamientos FORCE ROW LEVEL SECURITY;
+ALTER TABLE entrenamiento_ejercicios FORCE ROW LEVEL SECURITY;
+ALTER TABLE seguimiento FORCE ROW LEVEL SECURITY;
+ALTER TABLE archivos_paciente FORCE ROW LEVEL SECURITY;
+
+-- Funciones para obtener contexto del usuario (Backend Node.js Integration)
+CREATE OR REPLACE FUNCTION get_current_user_id() RETURNS UUID AS $$
+  BEGIN
+    RETURN NULLIF(current_setting('app.current_user_id', TRUE), '')::UUID;
+  EXCEPTION WHEN OTHERS THEN RETURN NULL; END;
+$$ LANGUAGE plpgsql STABLE;
+
+CREATE OR REPLACE FUNCTION get_current_user_role() RETURNS TEXT AS $$
+  BEGIN
+    RETURN current_setting('app.current_user_role', TRUE);
+  EXCEPTION WHEN OTHERS THEN RETURN NULL; END;
+$$ LANGUAGE plpgsql STABLE;
+
+-- Políticas de Usuarios
+CREATE POLICY usuarios_superadmin ON usuarios FOR ALL USING (get_current_user_role() = 'superadmin');
+CREATE POLICY usuarios_self ON usuarios FOR SELECT USING (id = get_current_user_id());
+
+-- Políticas de Pacientes
+CREATE POLICY pacientes_access ON pacientes FOR ALL USING (get_current_user_role() IN ('superadmin', 'admin'));
+
+-- Políticas de Citas (RESTRICCIÓN DE PROPIEDAD)
+CREATE POLICY citas_superadmin ON citas FOR ALL USING (get_current_user_role() = 'superadmin');
+CREATE POLICY citas_admin ON citas FOR ALL USING (usuario_id = get_current_user_id());
+
+-- Políticas de Entrenamientos (RESTRICCIÓN DE PROPIEDAD)
+CREATE POLICY entrenamientos_superadmin ON entrenamientos FOR ALL USING (get_current_user_role() = 'superadmin');
+CREATE POLICY entrenamientos_admin ON entrenamientos FOR ALL USING (usuario_id = get_current_user_id());
+
+-- Políticas de Seguimiento y Ejercicios (Herencia de acceso)
+CREATE POLICY seguimiento_access ON seguimiento FOR ALL USING (EXISTS (SELECT 1 FROM entrenamientos e WHERE e.id = entrenamiento_id));
+CREATE POLICY entreno_ej_access ON entrenamiento_ejercicios FOR ALL USING (EXISTS (SELECT 1 FROM entrenamientos e WHERE e.id = entrenamiento_id));
+
+-- Políticas de Archivos
+CREATE POLICY archivos_access ON archivos_paciente FOR ALL USING (get_current_user_role() IN ('superadmin', 'admin'));
+

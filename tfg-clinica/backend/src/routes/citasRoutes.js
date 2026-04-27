@@ -4,8 +4,9 @@ const citasController = require('../controllers/citasController');
 
 // GET /api/citas -> Obtener citas (filtradas por rol)
 router.get('/citas', citasController.getCitas);
-
-// POST /api/citas -> Crear nueva cita
 router.post('/citas', citasController.createCita);
+router.put('/citas/:id', citasController.updateCita);
+router.delete('/citas/:id', citasController.deleteCita);
+
 
 module.exports = router;

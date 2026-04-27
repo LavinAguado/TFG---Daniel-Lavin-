@@ -1,11 +1,14 @@
 {
-  "name": "backend",
+  "name": "theratrack-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "test:e2e": "node tests/e2e-backend.test.js"
   },
+
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -16,9 +19,10 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "form-data": "^4.0.5",
     "jsonwebtoken": "^9.0.3",
+    "multer": "^2.1.1",
     "nodemailer": "^8.0.5",
-    "openai": "^6.34.0",
     "pdfkit": "^0.18.0",
     "pg": "^8.20.0"
   }
