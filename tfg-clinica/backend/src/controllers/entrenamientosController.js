@@ -61,9 +61,29 @@ const createEntrenamiento = async (req, res) => {
         const fullEntrenamiento = resFull.rows[0];
 
         // Generar PDF de forma asíncrona (sin bloquear respuesta)
-        generateEntrenamientoPDF(fullEntrenamiento).then(pdfBuffer => {
+        generateEntrenamientoPDF(fullEntrenamiento).then(async (pdfBuffer) => {
           if (paciente.email) {
-            sendTrainingEmail(paciente.email, paciente.nombre, pdfBuffer);
+            // Obtener la próxima cita del paciente usando pool (fuera de contexto RLS del usuario)
+            let proximaCita = null;
+            try {
+              const resCita = await client.query(`
+                SELECT c.fecha, u.nombre as profesional
+                FROM citas c
+                JOIN usuarios u ON c.usuario_id = u.id
+                WHERE c.paciente_id = $1
+                  AND c.fecha >= NOW()
+                  AND c.estado NOT IN ('cancelada')
+                ORDER BY c.fecha ASC
+                LIMIT 1
+              `, [paciente_id]);
+              if (resCita.rows.length > 0) {
+                proximaCita = resCita.rows[0];
+              }
+            } catch (citaErr) {
+              console.warn('⚠️ No se pudo obtener la próxima cita para el email:', citaErr.message);
+            }
+
+            sendTrainingEmail(paciente.email, paciente.nombre, pdfBuffer, proximaCita);
           }
         }).catch(err => console.error('❌ Error post-creación entrenamiento:', err));
 

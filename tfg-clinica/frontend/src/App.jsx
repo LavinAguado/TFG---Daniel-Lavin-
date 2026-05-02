@@ -8,6 +8,7 @@ import Archivos from './pages/Archivos';
 import Ejercicios from './pages/Ejercicios';
 import PacienteDetalle from './pages/PacienteDetalle';
 import Seguimiento from './pages/Seguimiento';
+import SuperAdminPanel from './pages/SuperAdminPanel';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './components/MainLayout';
@@ -49,6 +50,10 @@ function App() {
         <Route 
           path="/ejercicios" 
           element={<ProtectedRoute><MainLayout><Ejercicios /></MainLayout></ProtectedRoute>} 
+        />
+        <Route 
+          path="/superadmin" 
+          element={<ProtectedRoute><MainLayout><SuperAdminPanel /></MainLayout></ProtectedRoute>} 
         />
 
       </Routes>

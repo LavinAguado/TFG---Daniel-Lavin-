@@ -92,8 +92,25 @@ const login = async (req, res) => {
   }
 };
 
+const getAdmins = async (req, res) => {
+  try {
+    const query = `
+      SELECT id, nombre, tipo 
+      FROM usuarios 
+      WHERE rol = 'admin' 
+      ORDER BY nombre ASC
+    `;
+    const result = await pool.query(query);
+    return res.status(200).json(result.rows);
+  } catch (err) {
+    console.error('Error en getAdmins:', err);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 module.exports = {
   register,
-  login
+  login,
+  getAdmins
 };
 

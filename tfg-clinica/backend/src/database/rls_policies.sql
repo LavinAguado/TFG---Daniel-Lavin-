@@ -46,12 +46,9 @@ CREATE POLICY pacientes_profesionales_all ON pacientes
   FOR ALL USING (get_current_user_role() IN ('superadmin', 'admin'));
 
 -- 5. POLÍTICAS PARA LA TABLA 'citas'
--- Superadmin: todo. Admin: solo sus propias citas.
-CREATE POLICY citas_superadmin_all ON citas
-  FOR ALL USING (get_current_user_role() = 'superadmin');
-
-CREATE POLICY citas_admin_registros ON citas
-  FOR ALL USING (usuario_id = get_current_user_id());
+-- Todos los profesionales (admin y superadmin) pueden ver y gestionar citas para el calendario global.
+CREATE POLICY citas_profesionales_all ON citas
+  FOR ALL USING (get_current_user_role() IN ('superadmin', 'admin'));
 
 -- 6. POLÍTICAS PARA LA TABLA 'entrenamientos'
 -- Superadmin: todo. Admin: solo sus propios entrenamientos.

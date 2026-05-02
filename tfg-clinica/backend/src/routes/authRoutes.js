@@ -22,5 +22,6 @@ const extractTokenOptional = (req, res, next) => {
 };
 
 router.post('/register', extractTokenOptional, authController.register);
+router.get('/admins', verificarToken, authController.getAdmins);
 
 module.exports = router;

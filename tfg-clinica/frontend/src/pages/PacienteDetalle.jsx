@@ -300,7 +300,7 @@ const PacienteDetalle = () => {
                     <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Notas / Objetivos</label>
                     <input 
                       type="text" 
-                      placeholder="Ej: Focuse en estabilidad"
+                      placeholder="Ej: Céntrese en estabilidad"
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-sky-500 outline-none"
                       value={nuevoEntrenamiento.notas}
                       onChange={(e) => setNuevoEntrenamiento({...nuevoEntrenamiento, notas: e.target.value})}

@@ -38,13 +38,17 @@ CREATE TABLE usuarios (
 -- 2. PACIENTES
 -- ──────────────────────────────────────────────────────────
 CREATE TABLE pacientes (
-  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  nombre            VARCHAR(150) NOT NULL,
-  apellidos         VARCHAR(200) NOT NULL,
-  fecha_nacimiento  DATE,
-  telefono          VARCHAR(20),
-  email             VARCHAR(200) UNIQUE,
-  created_at        TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+  id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  nombre              VARCHAR(150) NOT NULL,
+  apellidos           VARCHAR(200) NOT NULL,
+  fecha_nacimiento    DATE,
+  telefono            VARCHAR(20),
+  email               VARCHAR(200) UNIQUE,
+  motivo_consulta     TEXT,
+  dolencia            TEXT,
+  antecedentes        TEXT,
+  valoracion_inicial  TEXT,
+  created_at          TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
 -- ──────────────────────────────────────────────────────────

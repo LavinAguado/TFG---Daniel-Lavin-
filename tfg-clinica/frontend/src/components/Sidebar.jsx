@@ -9,12 +9,16 @@ import {
   ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
 
+import { ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../context/AuthContext';
+
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    logout();
     navigate('/');
   };
 
@@ -26,6 +30,10 @@ const Sidebar = () => {
     { name: 'Ejercicios', path: '/ejercicios', icon: ListBulletIcon },
     { name: 'Archivos', path: '/archivos', icon: FolderIcon },
   ];
+
+  if (user && user.rol === 'superadmin') {
+    menuItems.push({ name: 'SuperAdmin', path: '/superadmin', icon: ShieldCheckIcon });
+  }
 
 
 

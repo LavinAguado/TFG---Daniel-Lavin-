@@ -21,7 +21,17 @@ const getPacientes = async (req, res) => {
 
 const createPaciente = async (req, res) => {
   try {
-    const { nombre, apellidos, fecha_nacimiento, telefono, email } = req.body;
+    const { 
+      nombre, 
+      apellidos, 
+      fecha_nacimiento, 
+      telefono, 
+      email,
+      motivo_consulta,
+      dolencia,
+      antecedentes,
+      valoracion_inicial 
+    } = req.body;
 
     if (!nombre?.trim() || !apellidos?.trim()) {
       return res.status(400).json({ error: 'Nombre y apellidos son obligatorios' });
@@ -39,8 +49,11 @@ const createPaciente = async (req, res) => {
       }
 
       const query = `
-        INSERT INTO pacientes (nombre, apellidos, fecha_nacimiento, telefono, email)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO pacientes (
+          nombre, apellidos, fecha_nacimiento, telefono, email,
+          motivo_consulta, dolencia, antecedentes, valoracion_inicial
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         RETURNING *
       `;
       const resInsert = await client.query(query, [
@@ -48,7 +61,11 @@ const createPaciente = async (req, res) => {
         apellidos.trim(), 
         fecha_nacimiento || null, 
         telefono || null, 
-        email || null
+        email || null,
+        motivo_consulta || null,
+        dolencia || null,
+        antecedentes || null,
+        valoracion_inicial || null
       ]);
       return resInsert.rows[0];
     });
@@ -66,7 +83,17 @@ const createPaciente = async (req, res) => {
 const updatePaciente = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, apellidos, fecha_nacimiento, telefono, email } = req.body;
+    const { 
+      nombre, 
+      apellidos, 
+      fecha_nacimiento, 
+      telefono, 
+      email,
+      motivo_consulta,
+      dolencia,
+      antecedentes,
+      valoracion_inicial 
+    } = req.body;
 
     const data = await runInUserContext(req.user, async (client) => {
       const query = `
@@ -75,11 +102,26 @@ const updatePaciente = async (req, res) => {
             apellidos = COALESCE($2, apellidos),
             fecha_nacimiento = COALESCE($3, fecha_nacimiento),
             telefono = COALESCE($4, telefono),
-            email = COALESCE($5, email)
-        WHERE id = $6
+            email = COALESCE($5, email),
+            motivo_consulta = COALESCE($6, motivo_consulta),
+            dolencia = COALESCE($7, dolencia),
+            antecedentes = COALESCE($8, antecedentes),
+            valoracion_inicial = COALESCE($9, valoracion_inicial)
+        WHERE id = $10
         RETURNING *
       `;
-      const resUpdate = await client.query(query, [nombre, apellidos, fecha_nacimiento, telefono, email, id]);
+      const resUpdate = await client.query(query, [
+        nombre, 
+        apellidos, 
+        fecha_nacimiento, 
+        telefono, 
+        email, 
+        motivo_consulta, 
+        dolencia, 
+        antecedentes, 
+        valoracion_inicial, 
+        id
+      ]);
       return resUpdate.rows[0];
     });
 
