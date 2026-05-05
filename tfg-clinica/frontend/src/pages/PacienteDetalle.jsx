@@ -30,6 +30,57 @@ const PacienteDetalle = () => {
     ejercicios: [] // { ejercicio_id, series, repeticiones, notas }
   });
 
+  const [archivos, setArchivos] = useState([]);
+  const [fileToUpload, setFileToUpload] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+
+  const fetchArchivos = async () => {
+    try {
+      const res = await api.get(`/archivos/${id}`);
+      setArchivos(res.data);
+    } catch (err) {
+      console.error('Error fetching archivos:', err);
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    e.preventDefault();
+    if (!fileToUpload) return;
+
+    setUploading(true);
+    setUploadSuccess(false);
+    console.log('📄 [DEBUG] Archivo seleccionado para subir:', fileToUpload);
+
+    const formData = new FormData();
+    formData.append('file', fileToUpload);
+
+    try {
+      await api.post(`/archivos/${id}`, formData);
+      setUploadSuccess(true);
+      setFileToUpload(null);
+      // Reset input file
+      e.target.reset();
+      fetchArchivos();
+      setTimeout(() => setUploadSuccess(false), 3000);
+    } catch (err) {
+      console.error('Error uploading file:', err);
+      alert('Error al subir el archivo');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDownloadArchivo = async (archivoId) => {
+    try {
+      const res = await api.get(`/archivos/file/${archivoId}`);
+      window.open(res.data.url, '_blank');
+    } catch (err) {
+      console.error('Error getting file URL:', err);
+      alert('No se pudo obtener el archivo');
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -53,6 +104,9 @@ const PacienteDetalle = () => {
         // 4. Obtener Ejercicios para el modal
         const resEj = await api.get('/ejercicios');
         setEjerciciosDisponibles(resEj.data);
+
+        // 5. Obtener Archivos
+        fetchArchivos();
 
       } catch (err) {
         console.error('Error fetching data:', err);
@@ -269,6 +323,79 @@ const PacienteDetalle = () => {
               <p><span className="font-bold text-slate-400">Email:</span> {paciente.email || 'N/A'}</p>
               <p><span className="font-bold text-slate-400">ID:</span> <span className="font-mono text-[10px]">{paciente.id}</span></p>
               <p><span className="font-bold text-slate-400">Alta:</span> {new Date(paciente.created_at).toLocaleDateString()}</p>
+            </div>
+          </div>
+
+          <div className="card border-sky-100 bg-sky-50/20">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-sky-600 mb-4 flex items-center">
+              <DocumentTextIcon className="w-4 h-4 mr-2" />
+              Documentación y Archivos
+            </h3>
+            
+            <form onSubmit={handleFileUpload} className="space-y-4">
+              <div className="relative group">
+                <input 
+                  type="file" 
+                  id="file-upload"
+                  className="hidden" 
+                  onChange={(e) => setFileToUpload(e.target.files[0])}
+                  accept=".pdf,image/*"
+                />
+                <label 
+                  htmlFor="file-upload"
+                  className="flex flex-col items-center justify-center border-2 border-dashed border-sky-200 rounded-2xl p-6 bg-white hover:bg-sky-50 cursor-pointer transition-all group-hover:border-sky-400"
+                >
+                  <PlusIcon className="w-8 h-8 text-sky-400 mb-2" />
+                  <span className="text-xs font-bold text-sky-600">
+                    {fileToUpload ? fileToUpload.name : 'Seleccionar PDF o Imagen'}
+                  </span>
+                  <span className="text-[10px] text-slate-400 mt-1 text-center">Máximo 5MB por archivo</span>
+                </label>
+              </div>
+
+              {fileToUpload && (
+                <button 
+                  type="submit" 
+                  disabled={uploading}
+                  className={`w-full py-3 rounded-xl font-bold text-white transition-all shadow-lg ${uploading ? 'bg-slate-400' : 'bg-sky-600 hover:bg-sky-500 shadow-sky-600/20'}`}
+                >
+                  {uploading ? 'Subiendo...' : 'Confirmar Subida'}
+                </button>
+              )}
+
+              {uploadSuccess && (
+                <div className="bg-emerald-50 text-emerald-600 p-3 rounded-xl text-[10px] font-bold text-center border border-emerald-100 animate-in fade-in zoom-in duration-300">
+                  ¡Archivo subido correctamente!
+                </div>
+              )}
+            </form>
+
+            <div className="mt-8 space-y-3">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Archivos Recientes</p>
+              {archivos.length === 0 ? (
+                <p className="text-xs text-slate-400 italic px-1">No hay documentos todavía.</p>
+              ) : (
+                <div className="space-y-2">
+                  {archivos.map(file => (
+                    <button 
+                      key={file.id}
+                      onClick={() => handleDownloadArchivo(file.id)}
+                      className="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-slate-100 hover:border-sky-300 transition-all text-left group"
+                    >
+                      <div className="flex items-center">
+                        <div className="p-2 bg-slate-50 rounded-lg mr-3 group-hover:bg-sky-50">
+                          <DocumentTextIcon className="w-4 h-4 text-slate-400 group-hover:text-sky-600" />
+                        </div>
+                        <div className="overflow-hidden">
+                          <p className="text-xs font-bold text-slate-700 truncate w-32">{file.nombre}</p>
+                          <p className="text-[9px] text-slate-400">{new Date(file.created_at).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <ArrowLeftIcon className="w-4 h-4 text-slate-300 rotate-180 group-hover:text-sky-500 transition-transform group-hover:translate-x-1" />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

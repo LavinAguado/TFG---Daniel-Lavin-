@@ -6,6 +6,7 @@ const uploadArchivo = async (req, res) => {
   try {
     const { paciente_id } = req.params;
     const file = req.file;
+    console.log('📦 [DEBUG] req.file recibido:', file);
 
     if (!file) return res.status(400).json({ error: 'No se ha proporcionado ningún archivo' });
 
