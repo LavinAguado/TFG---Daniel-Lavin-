@@ -55,12 +55,10 @@ const Archivos = () => {
 
     setLoading(true);
     const formData = new FormData();
-    formData.append('archivo', file);
+    formData.append('file', file);
 
     try {
-      await api.post(`/archivos/${pacienteId}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      await api.post(`/archivos/${pacienteId}`, formData);
       setMensaje({ text: 'Archivo subido con éxito', type: 'success' });
       setFile(null);
       fetchArchivos();
