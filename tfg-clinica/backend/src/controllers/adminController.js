@@ -33,12 +33,12 @@ const createUser = async (req, res) => {
       return res.status(400).json({ error: 'Rol inválido' });
     }
 
-    if (rol === 'admin' && (!tipo || (tipo !== 'fisio' && tipo !== 'entrenador'))) {
-      return res.status(400).json({ error: 'Tipo (fisio o entrenador) es obligatorio para el rol admin' });
+    if (rol === 'admin' && !tipo) {
+      return res.status(400).json({ error: 'El tipo es obligatorio para el rol admin' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const tipoFinal = rol === 'superadmin' ? null : tipo;
+    const tipoFinal = rol === 'superadmin' ? null : tipo.trim().toLowerCase();
 
     const data = await runInUserContext(req.user, async (client) => {
       // Verificar si el email ya existe
@@ -77,8 +77,8 @@ const updateUser = async (req, res) => {
       return res.status(400).json({ error: 'Rol inválido' });
     }
 
-    if (rol === 'admin' && (!tipo || (tipo !== 'fisio' && tipo !== 'entrenador'))) {
-      return res.status(400).json({ error: 'Tipo (fisio o entrenador) es obligatorio para el rol admin' });
+    if (rol === 'admin' && !tipo) {
+      return res.status(400).json({ error: 'El tipo es obligatorio para el rol admin' });
     }
 
     const data = await runInUserContext(req.user, async (client) => {
@@ -88,7 +88,7 @@ const updateUser = async (req, res) => {
       }
 
       // Si el rol nuevo es superadmin, anulamos el tipo
-      const tipoFinal = rol === 'superadmin' ? null : (tipo || null);
+      const tipoFinal = rol === 'superadmin' ? null : (tipo ? tipo.trim().toLowerCase() : null);
 
       const query = `
         UPDATE usuarios 

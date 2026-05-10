@@ -19,11 +19,10 @@ const register = async (req, res) => {
 
     let finalTipo = null;
     if (rol === 'admin') {
-      const tiposValidos = ['fisio', 'entrenador'];
-      if (!tipo || !tiposValidos.includes(tipo)) {
-        return res.status(400).json({ error: `Si el rol es admin, el tipo debe ser uno de: ${tiposValidos.join(', ')}` });
+      if (!tipo) {
+        return res.status(400).json({ error: 'Si el rol es admin, el tipo es obligatorio (ej. fisio, entrenador, etc.)' });
       }
-      finalTipo = tipo;
+      finalTipo = tipo.trim().toLowerCase();
     }
 
     const salt = await bcrypt.genSalt(10);

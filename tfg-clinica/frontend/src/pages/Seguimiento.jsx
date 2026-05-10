@@ -74,21 +74,21 @@ const Seguimiento = () => {
 
   if (loading && !entrenamiento) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
-        <div className="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[#0F172A] p-6">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (enviado) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 animate-in fade-in duration-500">
-        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-10 text-center">
-          <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center p-6 animate-in fade-in duration-500">
+        <div className="max-w-md w-full bg-[#1E293B] rounded-3xl shadow-2xl p-10 text-center border border-slate-700/50">
+          <div className="w-20 h-20 bg-emerald-500/10 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircleIcon className="w-12 h-12" />
           </div>
-          <h2 className="text-2xl font-black text-slate-800 mb-4 tracking-tight uppercase">¡Enviado con éxito!</h2>
-          <p className="text-slate-500 font-medium leading-relaxed">
+          <h2 className="text-2xl font-black text-slate-200 mb-4 tracking-tight uppercase">¡Enviado con éxito!</h2>
+          <p className="text-slate-400 font-medium leading-relaxed">
             Tu fisioterapeuta recibirá tu feedback y ajustará tu plan según tu evolución. ¡Sigue así!
           </p>
         </div>
@@ -98,59 +98,59 @@ const Seguimiento = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-        <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 text-center border border-red-100">
-          <FaceFrownIcon className="w-16 h-16 text-red-200 mx-auto mb-4" />
-          <p className="text-red-600 font-bold">{error}</p>
+      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center p-6">
+        <div className="max-w-md w-full bg-[#1E293B] rounded-3xl shadow-xl p-8 text-center border border-red-500/20">
+          <FaceFrownIcon className="w-16 h-16 text-red-400/50 mx-auto mb-4" />
+          <p className="text-red-400 font-bold">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-12">
+    <div className="min-h-screen bg-[#0F172A] pb-12">
       {/* Header Público */}
-      <nav className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-10 shadow-sm">
+      <nav className="bg-[#1E293B] border-b border-slate-700/50 px-6 py-4 sticky top-0 z-10 shadow-sm">
         <div className="max-w-2xl mx-auto flex items-center">
-          <div className="w-8 h-8 bg-sky-600 rounded-lg flex items-center justify-center text-white font-black text-xs mr-3">T</div>
-          <span className="font-black text-slate-800 tracking-tighter uppercase">TheraTrack <span className="text-sky-600">Feedback</span></span>
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black text-xs mr-3">T</div>
+          <span className="font-black text-slate-200 tracking-tighter uppercase">TheraTrack <span className="text-blue-500">Feedback</span></span>
         </div>
       </nav>
 
       <main className="max-w-2xl mx-auto px-6 py-8 animate-in slide-in-from-bottom duration-500">
         <header className="mb-8">
-          <h1 className="text-3xl font-black text-slate-800 tracking-tight leading-tight mb-2">¿Cómo ha ido tu sesión?</h1>
-          <p className="text-slate-500 font-medium">Cuéntanos tus sensaciones para mejorar tu recuperación.</p>
+          <h1 className="text-3xl font-black text-slate-200 tracking-tight leading-tight mb-2">¿Cómo ha ido tu sesión?</h1>
+          <p className="text-slate-400 font-medium">Cuéntanos tus sensaciones para mejorar tu recuperación.</p>
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Sección General */}
-          <section className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-8">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-4">Sensaciones Generales</h2>
+          <section className="bg-[#1E293B] rounded-3xl shadow-sm border border-slate-700/50 p-6 md:p-8 space-y-8">
+            <h2 className="text-sm font-black text-slate-500 uppercase tracking-widest border-b border-slate-700/50 pb-4">Sensaciones Generales</h2>
             
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-4 flex items-center">
-                  <BoltIcon className="w-5 h-5 mr-2 text-sky-500" />
+                <label className="block text-sm font-bold text-slate-300 mb-4 flex items-center">
+                  <BoltIcon className="w-5 h-5 mr-2 text-blue-500" />
                   Nivel de Dolor (0-10)
                 </label>
                 <input 
                   type="range" min="0" max="10" 
-                  className="w-full accent-sky-600 h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer"
+                  className="w-full accent-blue-500 h-2 bg-slate-700/50 rounded-lg appearance-none cursor-pointer"
                   value={formData.dolor}
                   onChange={(e) => setFormData({...formData, dolor: parseInt(e.target.value)})}
                 />
-                <div className="flex justify-between text-[10px] font-black text-slate-400 mt-2 uppercase tracking-tighter">
+                <div className="flex justify-between text-[10px] font-black text-slate-500 mt-2 uppercase tracking-tighter">
                   <span>Sin dolor (0)</span>
-                  <span className="text-sky-600 text-lg">{formData.dolor}</span>
+                  <span className="text-blue-500 text-lg">{formData.dolor}</span>
                   <span>Dolor máximo (10)</span>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-4">Comentarios de la sesión</label>
+                <label className="block text-sm font-bold text-slate-300 mb-4">Comentarios de la sesión</label>
                 <textarea 
-                  className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 transition-all outline-none bg-slate-50 font-medium text-slate-600 resize-none"
+                  className="w-full px-5 py-4 rounded-2xl border border-slate-700/50 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none bg-[#0F172A] font-medium text-slate-300 resize-none placeholder:text-slate-500"
                   rows="3"
                   placeholder="¿Cómo te has sentido hoy en general?"
                   value={formData.comentarios}
@@ -162,22 +162,22 @@ const Seguimiento = () => {
 
           {/* Sección Ejercicios */}
           <div className="space-y-4">
-            <h2 className="text-sm font-black text-slate-400 uppercase tracking-widest ml-4">Detalle por Ejercicio</h2>
+            <h2 className="text-sm font-black text-slate-500 uppercase tracking-widest ml-4">Detalle por Ejercicio</h2>
             
             {formData.ejercicios.map((ej, index) => (
-              <section key={index} className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 space-y-6">
+              <section key={index} className="bg-[#1E293B] rounded-3xl shadow-sm border border-slate-700/50 p-6 space-y-6">
                 <div className="flex items-center space-x-3 mb-2">
-                  <div className="w-8 h-8 rounded-xl bg-sky-50 flex items-center justify-center text-sky-600 font-black text-sm">
+                  <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 font-black text-sm">
                     {index + 1}
                   </div>
-                  <h3 className="font-bold text-slate-800 text-lg">{ej.nombre}</h3>
+                  <h3 className="font-bold text-slate-200 text-lg">{ej.nombre}</h3>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-xs font-black text-slate-400 uppercase mb-3 tracking-widest">Esfuerzo Percibido</label>
+                    <label className="block text-xs font-black text-slate-500 uppercase mb-3 tracking-widest">Esfuerzo Percibido</label>
                     <select 
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 font-bold text-slate-700 outline-none"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-700/50 bg-[#0F172A] font-bold text-slate-300 outline-none [&>option]:bg-slate-800"
                       value={ej.esfuerzo_real}
                       onChange={(e) => handleExerciseChange(index, 'esfuerzo_real', parseInt(e.target.value))}
                     >
@@ -187,9 +187,9 @@ const Seguimiento = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-black text-slate-400 uppercase mb-3 tracking-widest">Dificultad Técnica</label>
+                    <label className="block text-xs font-black text-slate-500 uppercase mb-3 tracking-widest">Dificultad Técnica</label>
                     <select 
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 font-bold text-slate-700 outline-none"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-700/50 bg-[#0F172A] font-bold text-slate-300 outline-none [&>option]:bg-slate-800"
                       value={ej.dificultad}
                       onChange={(e) => handleExerciseChange(index, 'dificultad', parseInt(e.target.value))}
                     >
@@ -202,7 +202,7 @@ const Seguimiento = () => {
 
                 <div>
                   <textarea 
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-sky-500 transition-all outline-none bg-slate-50 text-sm font-medium text-slate-600 resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-700/50 focus:border-blue-500 transition-all outline-none bg-[#0F172A] text-sm font-medium text-slate-300 resize-none placeholder:text-slate-500"
                     rows="2"
                     placeholder="¿Alguna molestia con este ejercicio?"
                     value={ej.comentario}
@@ -216,14 +216,14 @@ const Seguimiento = () => {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full bg-slate-900 hover:bg-black text-white py-5 rounded-3xl font-black text-lg tracking-tight transition-all shadow-2xl shadow-slate-900/30 active:scale-[0.98] disabled:bg-slate-300"
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white py-5 rounded-3xl font-black text-lg tracking-tight transition-all shadow-2xl shadow-blue-500/20 active:scale-[0.98] disabled:bg-slate-700 disabled:text-slate-500 disabled:shadow-none"
           >
             {loading ? 'ENVIANDO...' : 'ENVIAR SEGUIMIENTO'}
           </button>
         </form>
       </main>
 
-      <footer className="max-w-2xl mx-auto px-6 text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-8">
+      <footer className="max-w-2xl mx-auto px-6 text-center text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-8">
         Potenciado por TheraTrack • Clínica de Fisioterapia
       </footer>
     </div>

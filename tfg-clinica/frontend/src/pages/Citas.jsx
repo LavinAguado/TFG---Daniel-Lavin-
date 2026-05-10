@@ -54,21 +54,21 @@ const CustomToolbar = ({ date, view, onNavigate, onView }) => {
       <div className="flex items-center gap-2">
         <button
           onClick={goToPrev}
-          className="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-600 transition-all"
+          className="p-2 rounded-xl border border-slate-700/50 hover:bg-slate-800 text-slate-400 transition-all"
           title="Anterior"
         >
           <ChevronLeftIcon className="w-5 h-5" />
         </button>
         <button
           onClick={() => onNavigate('TODAY')}
-          className="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-sm transition-all flex items-center gap-2"
+          className="px-4 py-2 rounded-xl border border-slate-700/50 hover:bg-slate-800 text-slate-300 font-bold text-sm transition-all flex items-center gap-2"
         >
           <CalendarDaysIcon className="w-4 h-4" />
           Hoy
         </button>
         <button
           onClick={goToNext}
-          className="p-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-600 transition-all"
+          className="p-2 rounded-xl border border-slate-700/50 hover:bg-slate-800 text-slate-400 transition-all"
           title="Siguiente"
         >
           <ChevronRightIcon className="w-5 h-5" />
@@ -76,18 +76,18 @@ const CustomToolbar = ({ date, view, onNavigate, onView }) => {
       </div>
 
       {/* Current period label */}
-      <h2 className="text-lg font-black text-slate-800 capitalize tracking-tight text-center">{label}</h2>
+      <h2 className="text-lg font-black text-slate-200 capitalize tracking-tight text-center">{label}</h2>
 
       {/* View switcher */}
-      <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+      <div className="flex items-center gap-1 bg-slate-800/50 p-1 rounded-xl border border-slate-700/50">
         {['month', 'week', 'day'].map((v) => (
           <button
             key={v}
             onClick={() => onView(v)}
             className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
               view === v
-                ? 'bg-white text-sky-700 shadow-sm shadow-slate-200'
-                : 'text-slate-500 hover:text-slate-700'
+                ? 'bg-[#1E293B] text-blue-400 shadow-sm shadow-black/20'
+                : 'text-slate-500 hover:text-slate-300'
             }`}
           >
             {viewLabels[v]}
@@ -111,13 +111,13 @@ const CustomEvent = ({ event }) => (
 );
 
 /* ─────────────────────────────────────────────
-   Estado de cita → colores
+   Estado de cita → colores (adaptado para dark mode)
 ───────────────────────────────────────────── */
 const ESTADO_STYLES = {
-  pendiente:  { bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
-  confirmada: { bg: '#dbeafe', color: '#1e40af', border: '#bfdbfe' },
-  completada: { bg: '#d1fae5', color: '#065f46', border: '#a7f3d0' },
-  cancelada:  { bg: '#fee2e2', color: '#991b1b', border: '#fecaca' },
+  pendiente:  { bg: 'rgba(217, 119, 6, 0.15)', color: '#FCD34D', border: 'rgba(217, 119, 6, 0.3)' },
+  confirmada: { bg: 'rgba(37, 99, 235, 0.15)', color: '#60A5FA', border: 'rgba(37, 99, 235, 0.3)' },
+  completada: { bg: 'rgba(5, 150, 105, 0.15)', color: '#34D399', border: 'rgba(5, 150, 105, 0.3)' },
+  cancelada:  { bg: 'rgba(220, 38, 38, 0.15)', color: '#F87171', border: 'rgba(220, 38, 38, 0.3)' },
 };
 
 /* ─────────────────────────────────────────────
@@ -288,14 +288,14 @@ const Citas = () => {
     <div className="space-y-6 animate-in fade-in duration-500">
 
       {/* ── Header ── */}
-      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#1E293B] p-6 rounded-3xl shadow-sm shadow-black/10 border border-slate-700/50">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Agenda Clínica</h1>
-          <p className="text-slate-500 mt-1 font-medium">Gestión de citas por día, semana y mes.</p>
+          <h1 className="text-3xl font-bold text-slate-200 tracking-tight">Agenda Clínica</h1>
+          <p className="text-slate-400 mt-1 font-medium">Gestión de citas por día, semana y mes.</p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           <select
-            className="px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20"
+            className="px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800/50 text-slate-300 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 [&>option]:bg-slate-800"
             value={profFilter}
             onChange={e => setProfFilter(e.target.value)}
           >
@@ -306,7 +306,7 @@ const Citas = () => {
           </select>
           <button
             onClick={() => openCreate()}
-            className="flex items-center bg-slate-900 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-black transition-all shadow-lg shadow-slate-900/10"
+            className="flex items-center bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-500 transition-all shadow-lg shadow-blue-500/20"
           >
             <PlusIcon className="w-4 h-4 mr-2" />
             Nueva Cita
@@ -317,7 +317,7 @@ const Citas = () => {
       {/* ── Toast message ── */}
       {mensaje.text && (
         <div className={`p-4 rounded-2xl flex items-center shadow-lg animate-in slide-in-from-top duration-300 ${
-          mensaje.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'
+          mensaje.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'
         }`}>
           {mensaje.type === 'success'
             ? <CheckCircleIcon className="w-5 h-5 mr-2 flex-shrink-0" />
@@ -327,34 +327,38 @@ const Citas = () => {
       )}
 
       {/* ── Calendar card ── */}
-      <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="bg-[#1E293B] p-6 rounded-3xl border border-slate-700/50 shadow-sm shadow-black/10">
         <style>{`
           .rbc-calendar { border: none !important; font-family: inherit; }
-          .rbc-month-view { border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
-          .rbc-time-view { border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
-          .rbc-header { padding: 10px 8px; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #64748b; background: #f8fafc; border-bottom: 1px solid #e2e8f0 !important; }
-          .rbc-today { background: #f0f9ff !important; }
-          .rbc-off-range-bg { background: #fafafa !important; }
+          .rbc-month-view { border-radius: 12px; border: 1px solid #334155; overflow: hidden; background: #0F172A; }
+          .rbc-time-view { border-radius: 12px; border: 1px solid #334155; overflow: hidden; background: #0F172A; }
+          .rbc-header { padding: 10px 8px; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #94A3B8; background: #1E293B; border-bottom: 1px solid #334155 !important; }
+          .rbc-today { background: rgba(37, 99, 235, 0.05) !important; }
+          .rbc-off-range-bg { background: #0B1120 !important; }
+          .rbc-day-bg { border-left: 1px solid #334155; }
+          .rbc-month-row + .rbc-month-row { border-top: 1px solid #334155; }
           .rbc-event { transition: transform .15s, box-shadow .15s; }
-          .rbc-event:hover { transform: translateY(-1px); box-shadow: 0 4px 8px -2px rgba(0,0,0,.12); }
+          .rbc-event:hover { transform: translateY(-1px); box-shadow: 0 4px 12px -2px rgba(0,0,0,.5); }
           .rbc-event:focus { outline: none; }
-          .rbc-slot-selection { background: rgba(14,165,233,.15); }
-          .rbc-time-slot { border-color: #f1f5f9; }
-          .rbc-timeslot-group { border-color: #e2e8f0; min-height: 56px; }
-          .rbc-time-content { border-top: 1px solid #e2e8f0; }
-          .rbc-time-header-content { border-left: 1px solid #e2e8f0; }
+          .rbc-slot-selection { background: rgba(37,99,235,.2); }
+          .rbc-time-slot { border-color: #1E293B; }
+          .rbc-timeslot-group { border-color: #334155; min-height: 56px; }
+          .rbc-time-content { border-top: 1px solid #334155; }
+          .rbc-time-header-content { border-left: 1px solid #334155; }
           .rbc-allday-cell { display: none; }
-          .rbc-current-time-indicator { background: #0ea5e9; height: 2px; }
-          .rbc-day-slot .rbc-time-slot { border-top: 1px dashed #f1f5f9; }
+          .rbc-current-time-indicator { background: #3B82F6; height: 2px; }
+          .rbc-day-slot .rbc-time-slot { border-top: 1px dashed #1E293B; }
+          .rbc-time-header.rbc-overflowing { border-right: 1px solid #334155; }
+          .rbc-time-gutter .rbc-timeslot-group { border-bottom: 1px solid #334155; border-right: 1px solid #334155; color: #94A3B8; }
           /* hide default toolbar since we have our own */
           .rbc-toolbar { display: none; }
           .rbc-month-row { overflow: visible; }
-          .rbc-show-more { font-size: 11px; font-weight: 700; color: #0ea5e9; }
+          .rbc-show-more { font-size: 11px; font-weight: 700; color: #60A5FA; }
         `}</style>
 
         {loading ? (
           <div className="flex justify-center items-center" style={{ height: 640 }}>
-            <div className="w-10 h-10 border-4 border-sky-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
           <>
@@ -367,7 +371,7 @@ const Citas = () => {
               }}
               onView={setView}
             />
-            <div style={{ height: 640 }}>
+            <div style={{ height: 640 }} className="text-slate-300">
               <Calendar
                 localizer={localizer}
                 events={events}
@@ -415,17 +419,17 @@ const Citas = () => {
 
       {/* ── Modal ── */}
       {showModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg animate-in zoom-in duration-300 overflow-hidden">
+        <div className="fixed inset-0 bg-[#0F172A]/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-[#1E293B] rounded-3xl shadow-2xl shadow-black/50 border border-slate-700/50 w-full max-w-lg animate-in zoom-in duration-300 overflow-hidden">
             <div className="p-8">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-black text-slate-800 tracking-tight">
+                <h2 className="text-2xl font-black text-slate-200 tracking-tight">
                   {isEditing ? 'Detalle de Cita' : 'Nueva Cita'}
-                  <span className="ml-3 text-xs font-medium text-slate-400">
+                  <span className="ml-3 text-xs font-medium text-slate-500">
                     ({pacientes.length} p / {profesionales.length} pr)
                   </span>
                 </h2>
-                <button onClick={() => setShowModal(false)} className="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-all">
+                <button onClick={() => setShowModal(false)} className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-slate-200 transition-all">
                   <XMarkIcon className="w-6 h-6" />
                 </button>
               </div>
@@ -433,9 +437,9 @@ const Citas = () => {
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Paciente */}
                 <div>
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Paciente</label>
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Paciente</label>
                   <select
-                    className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none bg-slate-50 font-bold text-slate-700 transition-all"
+                    className="w-full px-5 py-4 rounded-2xl border border-slate-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none bg-slate-800/50 font-bold text-slate-200 transition-all [&>option]:bg-slate-800"
                     value={formData.paciente_id}
                     onChange={e => setFormData(p => ({ ...p, paciente_id: e.target.value }))}
                     disabled={isEditing}
@@ -452,12 +456,12 @@ const Citas = () => {
 
                 {/* Profesional */}
                 <div>
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1">
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-1">
                     <UserCircleIcon className="w-3 h-3" />Profesional Asignado *
                   </label>
                   <select
-                    className={`w-full px-5 py-4 rounded-2xl border outline-none font-bold text-slate-700 transition-all focus:ring-4 focus:ring-sky-500/10 ${
-                      !formData.usuario_id ? 'border-amber-300 bg-amber-50 focus:border-amber-400' : 'border-slate-200 bg-slate-50 focus:border-sky-500'
+                    className={`w-full px-5 py-4 rounded-2xl border outline-none font-bold transition-all focus:ring-4 focus:ring-blue-500/10 [&>option]:bg-slate-800 ${
+                      !formData.usuario_id ? 'border-amber-500/50 bg-amber-500/10 text-amber-200 focus:border-amber-400' : 'border-slate-700 bg-slate-800/50 text-slate-200 focus:border-blue-500'
                     }`}
                     value={formData.usuario_id}
                     onChange={e => setFormData(p => ({ ...p, usuario_id: e.target.value }))}
@@ -475,19 +479,19 @@ const Citas = () => {
                 {/* Fecha + Estado */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Fecha y Hora</label>
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Fecha y Hora</label>
                     <input
                       type="datetime-local"
-                      className="w-full px-4 py-4 rounded-2xl border border-slate-200 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none bg-slate-50 font-bold text-slate-700 transition-all"
+                      className="w-full px-4 py-4 rounded-2xl border border-slate-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none bg-slate-800/50 font-bold text-slate-200 transition-all [color-scheme:dark]"
                       value={formData.fecha}
                       onChange={e => setFormData(p => ({ ...p, fecha: e.target.value }))}
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Estado</label>
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Estado</label>
                     <select
-                      className="w-full px-4 py-4 rounded-2xl border border-slate-200 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none bg-slate-50 font-bold text-slate-700 transition-all"
+                      className="w-full px-4 py-4 rounded-2xl border border-slate-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none bg-slate-800/50 font-bold text-slate-200 transition-all [&>option]:bg-slate-800"
                       value={formData.estado}
                       onChange={e => setFormData(p => ({ ...p, estado: e.target.value }))}
                     >
@@ -501,12 +505,12 @@ const Citas = () => {
 
                 {/* Comentarios */}
                 <div>
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center">
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 flex items-center">
                     <ChatBubbleBottomCenterTextIcon className="w-3 h-3 mr-1" />Comentarios Clínicos
                   </label>
                   <textarea
                     rows="3"
-                    className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 outline-none bg-slate-50 font-medium text-slate-600 resize-none transition-all"
+                    className="w-full px-5 py-4 rounded-2xl border border-slate-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none bg-slate-800/50 font-medium text-slate-300 placeholder:text-slate-500 resize-none transition-all"
                     placeholder="Notas sobre la consulta o evolución..."
                     value={formData.comentarios}
                     onChange={e => setFormData(p => ({ ...p, comentarios: e.target.value }))}
@@ -516,12 +520,12 @@ const Citas = () => {
                 <div className="flex gap-3 pt-2">
                   {isEditing && (
                     <button type="button" onClick={() => handleDelete(selectedCita.id)}
-                      className="px-5 py-4 rounded-2xl font-bold text-red-600 bg-red-50 hover:bg-red-100 transition-all">
+                      className="px-5 py-4 rounded-2xl font-bold text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all">
                       Eliminar
                     </button>
                   )}
                   <button type="submit"
-                    className="flex-1 bg-slate-900 hover:bg-black text-white px-6 py-4 rounded-2xl font-bold shadow-xl shadow-slate-900/20 transition-all">
+                    className="flex-1 bg-blue-600 hover:bg-blue-500 text-white px-6 py-4 rounded-2xl font-bold shadow-xl shadow-blue-500/20 transition-all">
                     {isEditing ? 'Guardar Cambios' : 'Agendar Cita'}
                   </button>
                 </div>
