@@ -32,15 +32,6 @@ const SuperAdminPanel = () => {
     tipo: 'fisio'
   });
 
-  useEffect(() => {
-    // Protección de ruta extra a nivel de componente
-    if (!user || user.rol !== 'superadmin') {
-      navigate('/dashboard', { replace: true });
-      return;
-    }
-    fetchUsers();
-  }, [user, navigate]);
-
   const fetchUsers = async () => {
     setLoading(true);
     try {
@@ -53,6 +44,15 @@ const SuperAdminPanel = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Protección de ruta extra a nivel de componente
+    if (!user || user.rol !== 'superadmin') {
+      navigate('/dashboard', { replace: true });
+      return;
+    }
+    fetchUsers();
+  }, [user, navigate]);
 
   const handleOpenCreate = () => {
     setIsEditing(false);

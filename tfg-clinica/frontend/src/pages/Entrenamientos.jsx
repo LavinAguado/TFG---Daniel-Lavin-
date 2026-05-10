@@ -16,22 +16,22 @@ const Entrenamientos = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchEntrenamientos = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get('/entrenamientos');
+        // En un entorno real, el backend debería devolver el nombre del paciente.
+        // Por ahora, asumimos que el backend devuelve { id, fecha, notas, paciente_id, paciente_nombre, paciente_apellidos }
+        setEntrenamientos(res.data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)));
+      } catch (err) {
+        console.error('Error fetching entrenamientos:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchEntrenamientos();
   }, []);
-
-  const fetchEntrenamientos = async () => {
-    try {
-      setLoading(true);
-      const res = await api.get('/entrenamientos');
-      // En un entorno real, el backend debería devolver el nombre del paciente.
-      // Por ahora, asumimos que el backend devuelve { id, fecha, notas, paciente_id, paciente_nombre, paciente_apellidos }
-      setEntrenamientos(res.data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)));
-    } catch (err) {
-      console.error('Error fetching entrenamientos:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filteredEntrenamientos = entrenamientos.filter(ent => 
     ent.pacientes?.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||

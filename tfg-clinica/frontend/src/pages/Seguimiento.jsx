@@ -12,7 +12,6 @@ import {
 
 const Seguimiento = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [entrenamiento, setEntrenamiento] = useState(null);
   const [loading, setLoading] = useState(true);
   const [enviado, setEnviado] = useState(false);
@@ -24,10 +23,6 @@ const Seguimiento = () => {
     comentarios: '',
     ejercicios: []
   });
-
-  useEffect(() => {
-    fetchEntrenamiento();
-  }, [id]);
 
   const fetchEntrenamiento = async () => {
     try {
@@ -43,12 +38,16 @@ const Seguimiento = () => {
         comentario: ''
       }));
       setFormData(prev => ({ ...prev, ejercicios: initialEjercicios }));
-    } catch (err) {
+    } catch {
       setError('No se pudo cargar el entrenamiento. Es posible que el enlace haya expirado o sea incorrecto.');
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchEntrenamiento();
+  }, [id]);
 
   const handleExerciseChange = (index, field, value) => {
     const updated = [...formData.ejercicios];

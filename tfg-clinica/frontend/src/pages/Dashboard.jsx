@@ -1,92 +1,187 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
+import { 
+  UsersIcon, 
+  CalendarDaysIcon, 
+  ClockIcon,
+  ChevronRightIcon
+} from '@heroicons/react/24/outline';
+
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const [pacientesCount, setPacientesCount] = useState(0);
+  const [citasHoy, setCitasHoy] = useState([]);
+  const [proximosEventos, setProximosEventos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const [pacientesRes, citasRes] = await Promise.all([
+          api.get('/pacientes'),
+          api.get('/citas')
+        ]);
+        
+        setPacientesCount(pacientesRes.data.length);
+        
+        // Process citas
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        
+        const manana = new Date(hoy);
+        manana.setDate(manana.getDate() + 1);
+
+        const todasCitas = citasRes.data;
+        
+        // Citas del día de hoy
+        const hoyCitas = todasCitas.filter(cita => {
+          const fechaCita = new Date(cita.fecha);
+          return fechaCita >= hoy && fechaCita < manana;
+        }).sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+        setCitasHoy(hoyCitas);
+
+        // Próximos eventos (citas a partir de mañana, max 5)
+        const eventosFuturos = todasCitas.filter(cita => {
+          const fechaCita = new Date(cita.fecha);
+          return fechaCita >= manana;
+        }).sort((a, b) => new Date(a.fecha) - new Date(b.fecha)).slice(0, 5);
+
+        setProximosEventos(eventosFuturos);
+        
+      } catch (error) {
+        console.error("Error cargando datos del dashboard:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div className="animate-in fade-in duration-500">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-800">Panel de Control</h1>
-        <p className="text-slate-500 mt-1">Resumen general de la actividad de la clínica</p>
+        <h1 className="text-3xl font-black text-slate-800 tracking-tight">Panel de Control</h1>
+        <p className="text-slate-500 mt-1 font-medium">Resumen general de la actividad de la clínica</p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        <div className="card border-l-4 border-sky-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-slate-500 font-bold text-sm uppercase tracking-wider">Pacientes Totales</h3>
-            <span className="bg-sky-100 text-sky-600 p-2 rounded-lg">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-            </span>
+      {/* Tarjetas de Resumen */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+          <div>
+            <h3 className="text-slate-500 font-bold text-sm uppercase tracking-wider mb-2">Total Pacientes</h3>
+            <p className="text-4xl font-extrabold text-slate-800">{pacientesCount}</p>
           </div>
-          <p className="text-4xl font-extrabold text-slate-800">124</p>
-          <div className="mt-4 text-sm text-emerald-600 font-medium flex items-center">
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-            12% este mes
+          <div className="w-14 h-14 bg-sky-50 text-sky-600 rounded-2xl flex items-center justify-center">
+            <UsersIcon className="w-8 h-8" />
           </div>
         </div>
 
-        <div className="card border-l-4 border-purple-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-slate-500 font-bold text-sm uppercase tracking-wider">Citas Hoy</h3>
-            <span className="bg-purple-100 text-purple-600 p-2 rounded-lg">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002-2z"></path></svg>
-            </span>
+        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
+          <div>
+            <h3 className="text-slate-500 font-bold text-sm uppercase tracking-wider mb-2">Citas de Hoy</h3>
+            <p className="text-4xl font-extrabold text-slate-800">{citasHoy.length}</p>
           </div>
-          <p className="text-4xl font-extrabold text-slate-800">8</p>
-          <div className="mt-4 text-sm text-slate-500 font-medium">
-            3 pendientes para la tarde
-          </div>
-        </div>
-
-        <div className="card border-l-4 border-amber-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-slate-500 font-bold text-sm uppercase tracking-wider">Entrenamientos</h3>
-            <span className="bg-amber-100 text-amber-600 p-2 rounded-lg">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-            </span>
-          </div>
-          <p className="text-4xl font-extrabold text-slate-800">42</p>
-          <div className="mt-4 text-sm text-emerald-600 font-medium flex items-center">
-            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-            5 nuevos planes
+          <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
+            <CalendarDaysIcon className="w-8 h-8" />
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="card">
-          <h3 className="text-lg font-bold text-slate-800 mb-6">Próximas Citas</h3>
-          <div className="space-y-4">
-            {[
-              { id: 1, name: 'Juan Pérez', time: '10:30 AM', type: 'Fisioterapia' },
-              { id: 2, name: 'María García', time: '11:15 AM', type: 'Evaluación' },
-              { id: 3, name: 'Roberto S.', time: '12:00 PM', type: 'Entrenamiento' },
-            ].map(cita => (
-              <div key={cita.id} className="flex items-center p-3 hover:bg-slate-50 rounded-xl transition-all cursor-pointer border border-transparent hover:border-slate-100">
-                <div className="w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-bold mr-4">
-                  {cita.name.charAt(0)}
-                </div>
-                <div className="flex-1">
-                  <p className="font-bold text-slate-800 text-sm">{cita.name}</p>
-                  <p className="text-xs text-slate-400">{cita.type}</p>
-                </div>
-                <div className="text-right text-sm font-bold text-slate-600">
-                  {cita.time}
-                </div>
-              </div>
-            ))}
+        {/* Citas de Hoy */}
+        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col h-full">
+          <div className="p-6 border-b border-slate-50 bg-slate-50/50">
+            <h3 className="text-lg font-bold text-slate-800 flex items-center">
+              <ClockIcon className="w-5 h-5 text-sky-500 mr-2" />
+              Agenda del Día
+            </h3>
           </div>
-          <button className="w-full mt-6 py-2 text-sm font-bold text-sky-600 hover:text-sky-700 transition-colors">
-            Ver toda la agenda &rarr;
-          </button>
+          <div className="p-6 flex-1">
+            {citasHoy.length > 0 ? (
+              <div className="space-y-4">
+                {citasHoy.map(cita => (
+                  <div key={cita.id} className="flex items-center p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-sky-100 transition-colors">
+                    <div className="w-12 h-12 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-bold mr-4 shrink-0">
+                      {cita.paciente_nombre ? cita.paciente_nombre.charAt(0).toUpperCase() : 'P'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-slate-800 text-base truncate">{cita.paciente_nombre}</p>
+                      <p className="text-xs text-slate-500 truncate">{cita.motivo}</p>
+                    </div>
+                    <div className="text-right ml-4">
+                      <p className="text-sm font-bold text-slate-700 bg-white px-3 py-1 rounded-lg border border-slate-100 shadow-sm">
+                        {new Date(cita.fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center py-10 text-slate-400">
+                <CalendarDaysIcon className="w-12 h-12 mb-3 opacity-20" />
+                <p className="font-medium">No hay citas programadas para hoy.</p>
+              </div>
+            )}
+          </div>
+          <div className="p-4 border-t border-slate-50 bg-slate-50/30 text-center">
+            <button 
+              onClick={() => navigate('/citas')}
+              className="text-sm font-bold text-sky-600 hover:text-sky-700 transition-colors flex items-center justify-center w-full"
+            >
+              Ver calendario completo
+              <ChevronRightIcon className="w-4 h-4 ml-1" />
+            </button>
+          </div>
         </div>
 
-        <div className="card bg-gradient-to-br from-sky-600 to-indigo-700 text-white">
-          <h3 className="text-lg font-bold mb-2">Asistente TheraTrack IA</h3>
-          <p className="text-sky-100 text-sm mb-6">Genera un resumen automático de la evolución de tus pacientes usando el historial clínico y métricas de entrenamiento.</p>
-          <div className="bg-white/10 p-4 rounded-xl border border-white/10 mb-6">
-            <p className="text-xs font-bold uppercase tracking-wider text-sky-200 mb-2">Consejo del Día</p>
-            <p className="text-sm">"Revisa los datos de esfuerzo (RPE) de Sofía Martínez; ha subido un 20% en la última semana sin aumento de dolor."</p>
+        {/* Próximos Eventos */}
+        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col h-full">
+          <div className="p-6 border-b border-slate-50 bg-slate-50/50">
+            <h3 className="text-lg font-bold text-slate-800 flex items-center">
+              <CalendarDaysIcon className="w-5 h-5 text-indigo-500 mr-2" />
+              Próximos Eventos
+            </h3>
           </div>
-          <button className="bg-white text-sky-700 px-6 py-3 rounded-xl font-bold hover:bg-sky-50 transition-all shadow-lg shadow-sky-950/20">
-            Ir a Resumen IA
-          </button>
+          <div className="p-6 flex-1">
+            {proximosEventos.length > 0 ? (
+              <div className="space-y-4">
+                {proximosEventos.map(cita => {
+                  const fecha = new Date(cita.fecha);
+                  return (
+                    <div key={cita.id} className="flex items-start p-4 hover:bg-slate-50 rounded-2xl transition-all border border-slate-50 hover:border-indigo-100">
+                      <div className="flex flex-col items-center justify-center bg-indigo-50 text-indigo-600 rounded-xl w-14 h-14 mr-4 shrink-0">
+                        <span className="text-xs font-bold uppercase">{fecha.toLocaleDateString('es-ES', { month: 'short' })}</span>
+                        <span className="text-lg font-black leading-none">{fecha.getDate()}</span>
+                      </div>
+                      <div className="flex-1 min-w-0 pt-1">
+                        <p className="font-bold text-slate-800 text-base truncate">{cita.paciente_nombre}</p>
+                        <p className="text-xs text-slate-500 font-medium">
+                          {fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} • {cita.motivo}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="h-full flex flex-col items-center justify-center py-10 text-slate-400">
+                <CalendarDaysIcon className="w-12 h-12 mb-3 opacity-20" />
+                <p className="font-medium">No hay eventos próximos programados.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

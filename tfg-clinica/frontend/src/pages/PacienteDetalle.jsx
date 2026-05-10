@@ -83,38 +83,44 @@ const PacienteDetalle = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      // 1. Obtener datos básicos del paciente
       try {
         setLoadingPaciente(true);
-        // 1. Obtener datos básicos del paciente
         const resPaciente = await api.get(`/pacientes`);
         const found = resPaciente.data.find(p => p.id === id);
         if (!found) throw new Error('Paciente no encontrado');
         setPaciente(found);
+      } catch (err) {
+        console.error('Error fetching paciente:', err);
+        setError(err.response?.data?.error || err.message);
+      } finally {
         setLoadingPaciente(false);
+      }
 
-        // 2. Obtener resumen IA
+      // 2. Obtener resumen IA
+      try {
         setLoadingResumen(true);
         const resIA = await api.get(`/resumen-ia/${id}`);
         setResumenIA(resIA.data);
-        setLoadingResumen(false);
-
-        // 3. Obtener Entrenamientos
-        fetchEntrenamientos();
-
-        // 4. Obtener Ejercicios para el modal
-        const resEj = await api.get('/ejercicios');
-        setEjerciciosDisponibles(resEj.data);
-
-        // 5. Obtener Archivos
-        fetchArchivos();
-
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError(err.response?.data?.error || err.message);
+        console.error('Error fetching resumen IA:', err);
       } finally {
         setLoadingResumen(false);
-        setLoadingPaciente(false);
       }
+
+      // 3. Obtener Entrenamientos
+      fetchEntrenamientos();
+
+      // 4. Obtener Ejercicios para el modal
+      try {
+        const resEj = await api.get('/ejercicios');
+        setEjerciciosDisponibles(resEj.data);
+      } catch (err) {
+        console.error('Error fetching ejercicios:', err);
+      }
+
+      // 5. Obtener Archivos
+      fetchArchivos();
     };
 
     fetchData();
