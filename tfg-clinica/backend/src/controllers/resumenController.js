@@ -54,15 +54,21 @@ const construirResumenReglas = (paciente, historial, metricas) => {
   // 4. Adherencia
   const adherencia = `Ha realizado un total de ${metricas.sesiones_totales} sesiones de entrenamiento hasta la fecha.`;
 
+  // 5. Valoración inicial como puntos clave
+  let puntosClaveTexto = '';
+  if (paciente.valoracion_inicial && paciente.valoracion_inicial.trim().length > 0) {
+    puntosClaveTexto = `\n\nVALORACIÓN INICIAL:\n${paciente.valoracion_inicial.trim()}`;
+  }
+
   // Combinación final
-  return `${motivoIntro} ${evolucionTexto} ${estadoActual} ${adherencia}`;
+  return `${motivoIntro} ${evolucionTexto} ${estadoActual} ${adherencia}${puntosClaveTexto}`;
 };
 
 
 // --- Funciones Auxiliares de Datos (RLS Compliant) ---
 
 const fetchDatosPaciente = async (client, paciente_id) => {
-  const query = 'SELECT nombre, apellidos FROM pacientes WHERE id = $1';
+  const query = 'SELECT nombre, apellidos, valoracion_inicial FROM pacientes WHERE id = $1';
   const res = await client.query(query, [paciente_id]);
   return res.rows[0];
 };

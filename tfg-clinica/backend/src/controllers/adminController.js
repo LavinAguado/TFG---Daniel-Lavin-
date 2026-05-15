@@ -68,10 +68,7 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, email, rol, tipo } = req.body;
-
-    // No se permite cambiar la contraseña desde aquí por seguridad.
-    // Eso debería ir en un flujo separado de "restablecer contraseña".
+    const { nombre, email, rol, tipo, password } = req.body;
 
     if (rol && rol !== 'superadmin' && rol !== 'admin') {
       return res.status(400).json({ error: 'Rol inválido' });
@@ -79,6 +76,12 @@ const updateUser = async (req, res) => {
 
     if (rol === 'admin' && !tipo) {
       return res.status(400).json({ error: 'El tipo es obligatorio para el rol admin' });
+    }
+
+    // Hash de la nueva contraseña si se proporcionó
+    let hashedPassword = null;
+    if (password && password.trim().length >= 6) {
+      hashedPassword = await bcrypt.hash(password.trim(), 10);
     }
 
     const data = await runInUserContext(req.user, async (client) => {
@@ -90,16 +93,35 @@ const updateUser = async (req, res) => {
       // Si el rol nuevo es superadmin, anulamos el tipo
       const tipoFinal = rol === 'superadmin' ? null : (tipo ? tipo.trim().toLowerCase() : null);
 
-      const query = `
-        UPDATE usuarios 
-        SET nombre = COALESCE($1, nombre), 
-            email = COALESCE($2, email), 
-            rol = COALESCE($3, rol), 
-            tipo = COALESCE($4, tipo)
-        WHERE id = $5
-        RETURNING id, nombre, email, rol, tipo, created_at
-      `;
-      const resUpdate = await client.query(query, [nombre, email, rol, tipoFinal, id]);
+      let query;
+      let params;
+
+      if (hashedPassword) {
+        query = `
+          UPDATE usuarios 
+          SET nombre = COALESCE($1, nombre), 
+              email = COALESCE($2, email), 
+              rol = COALESCE($3, rol), 
+              tipo = COALESCE($4, tipo),
+              password = $5
+          WHERE id = $6
+          RETURNING id, nombre, email, rol, tipo, created_at
+        `;
+        params = [nombre, email, rol, tipoFinal, hashedPassword, id];
+      } else {
+        query = `
+          UPDATE usuarios 
+          SET nombre = COALESCE($1, nombre), 
+              email = COALESCE($2, email), 
+              rol = COALESCE($3, rol), 
+              tipo = COALESCE($4, tipo)
+          WHERE id = $5
+          RETURNING id, nombre, email, rol, tipo, created_at
+        `;
+        params = [nombre, email, rol, tipoFinal, id];
+      }
+
+      const resUpdate = await client.query(query, params);
       if (resUpdate.rowCount === 0) throw new Error('USER_NOT_FOUND');
       
       return resUpdate.rows[0];

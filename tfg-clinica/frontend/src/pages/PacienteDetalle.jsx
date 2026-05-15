@@ -233,7 +233,7 @@ const PacienteDetalle = () => {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-slate-200 flex items-center">
                   <SparklesIcon className="w-6 h-6 text-blue-500 mr-2" />
-                  Análisis Clínico TheraTrack IA
+                  Análisis Clínico TheraTrack
                 </h2>
               </div>
 

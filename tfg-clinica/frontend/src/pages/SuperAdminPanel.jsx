@@ -28,6 +28,7 @@ const SuperAdminPanel = () => {
     nombre: '',
     email: '',
     password: '',
+    newPassword: '',
     rol: 'admin',
     tipo: 'fisio'
   });
@@ -61,6 +62,7 @@ const SuperAdminPanel = () => {
       nombre: '',
       email: '',
       password: '',
+      newPassword: '',
       rol: 'admin',
       tipo: 'fisio'
     });
@@ -73,7 +75,8 @@ const SuperAdminPanel = () => {
     setFormData({
       nombre: usuario.nombre,
       email: usuario.email,
-      password: '', // No se edita la contraseña por aquí
+      password: '',
+      newPassword: '',
       rol: usuario.rol,
       tipo: usuario.tipo || 'fisio'
     });
@@ -107,11 +110,16 @@ const SuperAdminPanel = () => {
       }
       
       if (isEditing) {
-        // En edición no enviamos password
+        // En creación, usamos 'password'. En edición, usamos 'newPassword' (opcional)
         delete payload.password;
+        if (payload.newPassword && payload.newPassword.trim().length >= 6) {
+          payload.password = payload.newPassword.trim();
+        }
+        delete payload.newPassword;
         await api.put(`/admin/users/${selectedUser.id}`, payload);
         setMensaje({ text: 'Usuario actualizado', type: 'success' });
       } else {
+        delete payload.newPassword;
         await api.post('/admin/users', payload);
         setMensaje({ text: 'Usuario creado', type: 'success' });
       }
@@ -268,16 +276,31 @@ const SuperAdminPanel = () => {
                   />
                 </div>
 
-                {!isEditing && (
+                {!isEditing ? (
                   <div>
                     <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">Contraseña Temporal</label>
                     <input 
                       type="password"
-                      required={!isEditing}
+                      required
                       minLength="6"
                       className="w-full px-5 py-4 rounded-2xl border border-slate-700/50 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none bg-[#0F172A] font-bold text-slate-200"
                       value={formData.password}
                       onChange={(e) => setFormData({...formData, password: e.target.value})}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-xs font-black text-slate-500 uppercase tracking-widest mb-2">
+                      Nueva Contraseña
+                      <span className="ml-2 text-slate-600 normal-case font-medium tracking-normal">(opcional)</span>
+                    </label>
+                    <input 
+                      type="password"
+                      minLength="6"
+                      placeholder="Dejar vacío para no cambiarla"
+                      className="w-full px-5 py-4 rounded-2xl border border-slate-700/50 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none bg-[#0F172A] font-bold text-slate-200 placeholder:text-slate-600 placeholder:font-normal"
+                      value={formData.newPassword}
+                      onChange={(e) => setFormData({...formData, newPassword: e.target.value})}
                     />
                   </div>
                 )}
