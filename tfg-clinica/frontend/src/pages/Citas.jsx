@@ -20,6 +20,11 @@ const locales = { es };
 
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
 
+const localDateTimeToISOString = (localDateTime) => {
+  const date = new Date(localDateTime);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+};
+
 /* ─────────────────────────────────────────────
    Custom Toolbar — navigation + view switcher
 ───────────────────────────────────────────── */
@@ -229,13 +234,21 @@ const Citas = () => {
       showMsg('Debes completar paciente, profesional y fecha', 'error'); 
       return; 
     }
-    console.log('Datos enviados:', formData);
+
+    const fechaIso = localDateTimeToISOString(formData.fecha);
+    if (!fechaIso) {
+      showMsg('La fecha y hora no son válidas', 'error');
+      return;
+    }
+
+    const payload = { ...formData, fecha: fechaIso };
+    console.log('Datos enviados:', payload);
     try {
       if (isEditing) {
-        await api.put(`/citas/${selectedCita.id}`, formData);
+        await api.put(`/citas/${selectedCita.id}`, payload);
         showMsg('Cita actualizada', 'success');
       } else {
-        await api.post('/citas', formData);
+        await api.post('/citas', payload);
         showMsg('Cita agendada', 'success');
       }
       setShowModal(false);

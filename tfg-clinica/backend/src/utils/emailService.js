@@ -1,5 +1,7 @@
 const nodemailer = require('nodemailer');
 
+const CLINIC_TIME_ZONE = 'Europe/Madrid';
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -28,8 +30,18 @@ const sendTrainingEmail = async (email, nombre, pdfBuffer, proximaCita = null) =
   let citaHtml = '';
   if (proximaCita) {
     const fecha = new Date(proximaCita.fecha);
-    const fechaStr = fecha.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    const horaStr  = fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    const fechaStr = fecha.toLocaleDateString('es-ES', {
+      timeZone: CLINIC_TIME_ZONE,
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    const horaStr = fecha.toLocaleTimeString('es-ES', {
+      timeZone: CLINIC_TIME_ZONE,
+      hour: '2-digit',
+      minute: '2-digit'
+    });
     citaHtml = `
       <div style="margin-top:28px;padding:20px 24px;background:#f0f9ff;border-left:4px solid #0ea5e9;border-radius:8px;">
         <p style="margin:0 0 6px;font-size:13px;font-weight:700;color:#0369a1;text-transform:uppercase;letter-spacing:.5px;">📅 Recordatorio de tu próxima cita</p>

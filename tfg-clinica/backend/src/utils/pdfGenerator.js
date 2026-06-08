@@ -203,11 +203,13 @@ const generateEntrenamientoPDF = (entrenamiento) => {
           .font('Helvetica-Bold')
           .text('PRÓXIMA SESIÓN PROGRAMADA', 70, citaY + 15);
 
-        const fechaCita = new Date(entrenamiento.proxima_cita.fecha).toLocaleDateString('es-ES', { 
-          weekday: 'long', day: 'numeric', month: 'long' 
+        const fechaCita = new Date(entrenamiento.proxima_cita.fecha).toLocaleDateString('es-ES', {
+          timeZone: 'Europe/Madrid',
+          weekday: 'long', day: 'numeric', month: 'long'
         });
-        const horaCita = new Date(entrenamiento.proxima_cita.fecha).toLocaleTimeString('es-ES', { 
-          hour: '2-digit', minute: '2-digit' 
+        const horaCita = new Date(entrenamiento.proxima_cita.fecha).toLocaleTimeString('es-ES', {
+          timeZone: 'Europe/Madrid',
+          hour: '2-digit', minute: '2-digit'
         });
 
         doc
