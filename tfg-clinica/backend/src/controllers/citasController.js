@@ -1,6 +1,45 @@
 const { pool } = require('../config/db');
 const { runInUserContext } = require('../config/dbUtils');
 
+// Duración por defecto de una cita: 1 hora (en milisegundos)
+const DURACION_CITA_MS = 60 * 60 * 1000;
+
+/**
+ * Comprueba si ya existe una cita que se solape en la misma franja de 1 h
+ * para el mismo paciente o el mismo profesional.
+ * @param {object} client   - cliente pg dentro de la transacción
+ * @param {string} paciente_id
+ * @param {string} usuario_id
+ * @param {string} fecha    - ISO timestamp de la nueva cita
+ * @param {string|null} excludeId - ID de la cita actual (para updates)
+ * @returns {{ tipo: 'paciente'|'profesional', cita: object } | null}
+ */
+async function checkSolapamiento(client, paciente_id, usuario_id, fecha, excludeId = null) {
+  // Dos citas de 1 h se solapan si la diferencia de inicio es < 1 h.
+  // Condición: existing.fecha > (nueva - 1h) AND existing.fecha < (nueva + 1h)
+  const query = `
+    SELECT id, paciente_id, usuario_id, fecha
+    FROM citas
+    WHERE estado != 'cancelada'
+      AND fecha > ($1::timestamptz - interval '1 hour')
+      AND fecha < ($1::timestamptz + interval '1 hour')
+      AND (paciente_id = $2 OR usuario_id = $3)
+      ${excludeId ? 'AND id != $4' : ''}
+    LIMIT 1
+  `;
+  const params = excludeId
+    ? [fecha, paciente_id, usuario_id, excludeId]
+    : [fecha, paciente_id, usuario_id];
+
+  const res = await client.query(query, params);
+
+  if (res.rows.length === 0) return null;
+
+  const conflicto = res.rows[0];
+  const tipo = conflicto.paciente_id === paciente_id ? 'paciente' : 'profesional';
+  return { tipo, cita: conflicto };
+}
+
 const getCitas = async (req, res) => {
   try {
     const data = await runInUserContext(req.user, async (client) => {
@@ -83,6 +122,15 @@ const createCita = async (req, res) => {
       const checkU = await client.query('SELECT id FROM usuarios WHERE id = $1', [usuario_id]);
       if (checkU.rows.length === 0) throw new Error('PROFESIONAL_NOT_FOUND');
 
+      // Validación de solapamiento: mismo paciente o mismo profesional en la franja de 1 h
+      const solape = await checkSolapamiento(client, paciente_id, usuario_id, fecha);
+      if (solape) {
+        const msg = solape.tipo === 'paciente'
+          ? 'OVERLAP_PACIENTE'
+          : 'OVERLAP_PROFESIONAL';
+        throw new Error(msg);
+      }
+
       const query = `
         INSERT INTO citas (paciente_id, usuario_id, fecha, estado, comentarios)
         VALUES ($1, $2, $3, $4, $5)
@@ -106,6 +154,8 @@ const createCita = async (req, res) => {
   } catch (err) {
     if (err.message === 'PATIENT_NOT_FOUND') return res.status(404).json({ error: 'Paciente no encontrado' });
     if (err.message === 'PROFESIONAL_NOT_FOUND') return res.status(404).json({ error: 'Profesional no encontrado' });
+    if (err.message === 'OVERLAP_PACIENTE') return res.status(409).json({ error: 'El paciente ya tiene una cita en esa franja horaria' });
+    if (err.message === 'OVERLAP_PROFESIONAL') return res.status(409).json({ error: 'El profesional ya tiene una cita en esa franja horaria' });
     console.error('Error en createCita:', err);
     return res.status(500).json({ error: 'Error interno del servidor' });
   }
@@ -121,6 +171,26 @@ const updateCita = async (req, res) => {
       if (usuario_id) {
         const checkU = await client.query('SELECT id FROM usuarios WHERE id = $1', [usuario_id]);
         if (checkU.rows.length === 0) throw new Error('PROFESIONAL_NOT_FOUND');
+      }
+
+      // Si cambian fecha o profesional, validar solapamiento
+      if (fecha || usuario_id) {
+        // Obtener la cita actual para rellenar campos que no se envían
+        const citaActual = await client.query('SELECT * FROM citas WHERE id = $1', [id]);
+        if (citaActual.rows.length === 0) throw new Error('CITA_NOT_FOUND');
+        const ca = citaActual.rows[0];
+
+        const fechaFinal = fecha || ca.fecha;
+        const usuarioFinal = usuario_id || ca.usuario_id;
+        const pacienteFinal = ca.paciente_id;
+
+        const solape = await checkSolapamiento(client, pacienteFinal, usuarioFinal, fechaFinal, id);
+        if (solape) {
+          const msg = solape.tipo === 'paciente'
+            ? 'OVERLAP_PACIENTE'
+            : 'OVERLAP_PROFESIONAL';
+          throw new Error(msg);
+        }
       }
 
       const query = `
@@ -150,6 +220,8 @@ const updateCita = async (req, res) => {
   } catch (err) {
     if (err.message === 'CITA_NOT_FOUND') return res.status(404).json({ error: 'Cita no encontrada' });
     if (err.message === 'PROFESIONAL_NOT_FOUND') return res.status(404).json({ error: 'Profesional no encontrado' });
+    if (err.message === 'OVERLAP_PACIENTE') return res.status(409).json({ error: 'El paciente ya tiene una cita en esa franja horaria' });
+    if (err.message === 'OVERLAP_PROFESIONAL') return res.status(409).json({ error: 'El profesional ya tiene una cita en esa franja horaria' });
     console.error('Error en updateCita:', err);
     return res.status(500).json({ error: 'Error al actualizar cita' });
   }

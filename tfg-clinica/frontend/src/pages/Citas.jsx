@@ -247,8 +247,21 @@ const Citas = () => {
 
   const showMsg = (text, type) => {
     setMensaje({ text, type });
-    setTimeout(() => setMensaje({ text: '', type: '' }), 3500);
+    setTimeout(() => setMensaje({ text: '', type: '' }), 5000);
   };
+
+  /* Abrir modal de creación con la misma fecha/hora de la cita que se está editando */
+  const openDuplicate = useCallback(() => {
+    setIsEditing(false);
+    setSelectedCita(null);
+    setFormData(prev => ({
+      paciente_id: '',
+      usuario_id: '',
+      fecha: prev.fecha,
+      estado: 'pendiente',
+      comentarios: '',
+    }));
+  }, []);
 
   /* ── Calendar data ── */
   const events = useMemo(() => {
@@ -391,6 +404,7 @@ const Citas = () => {
                 onSelectSlot={openCreate}
                 onSelectEvent={openEdit}
                 eventPropGetter={eventPropGetter}
+                dayLayoutAlgorithm="no-overlap"
                 components={{ event: CustomEvent }}
                 tooltipAccessor={e => `${e.paciente}\nProfesional: ${e.profesional ?? 'Sin asignar'}\nEstado: ${e.estado}`}
                 messages={{
@@ -529,6 +543,13 @@ const Citas = () => {
                     {isEditing ? 'Guardar Cambios' : 'Agendar Cita'}
                   </button>
                 </div>
+                {isEditing && (
+                  <button type="button" onClick={openDuplicate}
+                    className="w-full mt-2 px-5 py-3 rounded-2xl font-bold text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 transition-all text-sm flex items-center justify-center gap-2">
+                    <PlusIcon className="w-4 h-4" />
+                    Crear otra cita en este horario
+                  </button>
+                )}
               </form>
             </div>
           </div>
