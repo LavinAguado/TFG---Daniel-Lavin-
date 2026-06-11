@@ -180,31 +180,31 @@ Los casos de uso representan las principales interacciones entre los actores y e
 ## CU1: Gestionar paciente
 - CRUD del paciente.
 
-![Caso de uso 1](./Fotos-TFG/Cap2/Caso%20de%20uso%201.png)
+![Caso de uso 1](../../02-actores-casos-uso/diagramas/cu-01-gestionar-paciente.png)
 
 ## CU2: Gestionar citas
 - CRUD citas.
 
-![Caso de uso 2](./Fotos-TFG/Cap2/Caso%20de%20uso%202.png)
+![Caso de uso 2](../../02-actores-casos-uso/diagramas/cu-02-gestionar-citas.png)
 
 ## CU3: Crear entrenamiento
 - Seleccionar ejercicios y definir parámetros.
 
-![Caso de uso 3](./Fotos-TFG/Cap2/Caso%20de%20uso%203.png)
+![Caso de uso 3](../../02-actores-casos-uso/diagramas/cu-03-crear-entrenamiento.png)
 
 ## CU4: Generar plantilla
 - Crear automáticamente un documento PDF con el entrenamiento.
 
-![Caso de uso 4](./Fotos-TFG/Cap2/Caso%20de%20uso%204.png)
+![Caso de uso 4](../../02-actores-casos-uso/diagramas/cu-04-generar-plantilla.png)
 
 ## CU5: Enviar entrenamiento
 - Enviar el documento al paciente por correo electrónico.
 
-![Caso de uso 5](./Fotos-TFG/Cap2/Caso%20de%20uso%205.png)
+![Caso de uso 5](../../02-actores-casos-uso/diagramas/cu-05-enviar-entrenamiento.png)
 
 ## CU6: Registrar seguimiento
 - Recoger información del paciente tras la sesión.
 
-![Caso de uso 6](./Fotos-TFG/Cap2/Caso%20de%20uso%206.png)
+![Caso de uso 6](../../02-actores-casos-uso/diagramas/cu-06-registrar-seguimiento.png)
 
 

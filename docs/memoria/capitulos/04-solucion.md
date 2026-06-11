@@ -74,46 +74,46 @@ PORT=
 
 ## Inicio de sesión
 
-![Login](./Fotos-TFG/Cap4/1.png)
+![Login](../../08-demostracion/capturas/01-login.png)
 
 ---
 
 ## Dashboard principal
 
-![Dashboard](./Fotos-TFG/Cap4/2.png)
+![Dashboard](../../08-demostracion/capturas/02-dashboard.png)
 
 ---
 
 ## Directorio de pacientes
 
-![Pacientes](./Fotos-TFG/Cap4/3.png)
+![Pacientes](../../08-demostracion/capturas/03-pacientes.png)
 
 ---
 
 ## Gestión de citas
 
-![Agenda](./Fotos-TFG/Cap4/4.png)
+![Agenda](../../08-demostracion/capturas/04-citas.png)
 
 ---
 
 ## Registro de entrenamientos
 
-![Entrenamientos](./Fotos-TFG/Cap4/5.png)
+![Entrenamientos](../../08-demostracion/capturas/05-entrenamientos.png)
 
 ---
 
 ## Catálogo de ejercicios
 
-![Ejercicios](./Fotos-TFG/Cap4/6.png)
+![Ejercicios](../../08-demostracion/capturas/06-ejercicios.png)
 
 ---
 
 ## Repositorio documental
 
-![Archivos](./Fotos-TFG/Cap4/7.png)
+![Archivos](../../08-demostracion/capturas/07-archivos.png)
 
 ---
 
 ## Panel de administración
 
-![SuperAdmin](./Fotos-TFG/Cap4/8.png)
+![SuperAdmin](../../08-demostracion/capturas/08-administracion.png)

@@ -1,5 +1,6 @@
 @echo off
 title Iniciar TheraTrack
+set "ROOT=%~dp0.."
 echo =======================================================================
 echo                 INICIANDO PROYECTO THERATRACK
 echo =======================================================================
@@ -7,11 +8,11 @@ echo.
 
 :: Iniciar Backend
 echo [1/2] Iniciando Backend de la API...
-start "TheraTrack - Backend" cmd /k "cd backend && node src/server.js"
+start "TheraTrack - Backend" cmd /k "cd /d ""%ROOT%\backend"" && npm run dev"
 
 :: Iniciar Frontend
 echo [2/2] Iniciando Frontend (React + Vite)...
-start "TheraTrack - Frontend" cmd /k "cd frontend && npx.cmd vite"
+start "TheraTrack - Frontend" cmd /k "cd /d ""%ROOT%\frontend"" && npm run dev"
 
 echo.
 echo =======================================================================

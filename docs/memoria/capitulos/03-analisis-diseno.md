@@ -56,10 +56,10 @@ A continuación, se presentan los diagramas de actividades asociados a los proce
 
 ## Diagramas de actividades
 
-![Crear Paciente](./Fotos-TFG/Cap%203/Diagramas%20de%20Actividades/Crearpaciente.png)
-![Crear Ejercicio](./Fotos-TFG/Cap%203/Diagramas%20de%20Actividades/CrearEjecicio.png)
-![Generar y enviar plantilla](./Fotos-TFG/Cap%203/Diagramas%20de%20Actividades/Generar%20yenviar%20plantilla.png)
-![Seguimiento post sesion](./Fotos-TFG/Cap%203/Diagramas%20de%20Actividades/Seguimiento%20post%20sesion.png)
+![Crear Paciente](../../04-analisis/actividades/crear-paciente.png)
+![Crear Ejercicio](../../04-analisis/actividades/crear-ejercicio.png)
+![Generar y enviar plantilla](../../04-analisis/actividades/generar-enviar-plantilla.png)
+![Seguimiento post sesion](../../04-analisis/actividades/seguimiento-post-sesion.png)
 
 ---
 
@@ -72,13 +72,13 @@ Los escenarios describen de forma detallada el flujo de ejecución de los princi
 A continuación, se presentan los escenarios asociados a los procesos más relevantes del sistema.
 
 ### Crear Paciente
-![Crear Paciente (Admin)](./Fotos-TFG/Cap%203/Diagramas%20casos%20de%20uso/CrearPacienteadmin.png)
+![Crear Paciente (Admin)](../../03-casos-representativos/diagramas/escenario-crear-paciente.png)
 ### Crear Entrenamiento
-![Crear Entrenamiento](./Fotos-TFG/Cap%203/Diagramas%20casos%20de%20uso/CrearEntrenamiento.png)
+![Crear Entrenamiento](../../03-casos-representativos/diagramas/escenario-crear-entrenamiento.png)
 ### Generar Plantilla
-![Generar Plantilla](./Fotos-TFG/Cap%203/Diagramas%20casos%20de%20uso/GenerarPlantilla.png)
+![Generar Plantilla](../../03-casos-representativos/diagramas/escenario-generar-plantilla.png)
 ### Seguimiento post - entreno
-![Post Sesion](./Fotos-TFG/Cap%203/Diagramas%20casos%20de%20uso/PostSesion.png)
+![Post Sesion](../../03-casos-representativos/diagramas/escenario-seguimiento.png)
 
 
 
@@ -267,10 +267,10 @@ Estos diagramas resultan especialmente útiles para comprender el flujo interno 
 
 A continuación, se presentan los diagramas de secuencia correspondientes a los procesos más relevantes del sistema.
 
-![Secuencia Crear Paciente](./Fotos-TFG/Cap%203/Diagrama%20de%20Secuencias/Secuencia-CrearPaciente.png)
-![Secuencia Crear Entrenamiento](./Fotos-TFG/Cap%203/Diagrama%20de%20Secuencias/Secuencia-CrearEntrenamiento.png)
-![Secuencia Plantilla](./Fotos-TFG/Cap%203/Diagrama%20de%20Secuencias/Secuencia-Plantilla.png)
-![Secuencia Post Sesion](./Fotos-TFG/Cap%203/Diagrama%20de%20Secuencias/Secuencia-PostSesion.png)
+![Secuencia Crear Paciente](../../05-diseno/secuencias/crear-paciente.png)
+![Secuencia Crear Entrenamiento](../../05-diseno/secuencias/crear-entrenamiento.png)
+![Secuencia Plantilla](../../05-diseno/secuencias/generar-enviar-plantilla.png)
+![Secuencia Post Sesion](../../05-diseno/secuencias/seguimiento-post-sesion.png)
 
 ---
 
@@ -282,7 +282,7 @@ La arquitectura del sistema define la estructura general de la solución propues
 
 El sistema se compone de tres capas principales: una capa de presentación desarrollada en React, una capa de lógica de negocio implementada en Node.js con Express, y una capa de persistencia de datos basada en PostgreSQL.
 
-![Arquitectura del sistema](./Fotos-TFG/Cap%203/Arquitectura%20del%20sistema.png)
+![Arquitectura del sistema](../../06-arquitectura/arquitectura-sistema.png)
 
 ---
 
@@ -290,7 +290,7 @@ El sistema se compone de tres capas principales: una capa de presentación desar
 
 El diagrama de despliegue representa la distribución física del sistema, mostrando los nodos hardware y los componentes software desplegados en cada uno de ellos. Este diagrama permite visualizar cómo se ejecuta la aplicación en un entorno real.
 
-![Diagrama de Despliegue](./Fotos-TFG/Cap%203/DiagramaDespliegue.png)
+![Diagrama de Despliegue](../../06-arquitectura/diagrama-despliegue.png)
 
 ---
 
@@ -298,19 +298,19 @@ El diagrama de despliegue representa la distribución física del sistema, mostr
 
 El diagrama de paquetes permite organizar el sistema en módulos lógicos, facilitando la comprensión de su estructura interna y la separación de responsabilidades entre los distintos componentes.
 
-![Diagrama de Paquetes](./Fotos-TFG/Cap%203/DiagramaPaquetes.png)
+![Diagrama de Paquetes](../../06-arquitectura/diagrama-paquetes.png)
 
 ---
 
 # 3.3.4 Diagrama de Clases
 
-![Diagrama de Clases](./Fotos-TFG/Cap%203/Diagrama%20de%20clases.png)
+![Diagrama de Clases](../../01-modelo-dominio/diagramas/diagrama-clases.png)
 
 ---
 
 # 3.3.5 Diagrama de Objetos
 
-![Diagrama de Objetos](./Fotos-TFG/Cap%203/Diagrama%20de%20objetos.png)
+![Diagrama de Objetos](../../01-modelo-dominio/diagramas/diagrama-objetos.png)
 
 ---
 
@@ -318,10 +318,10 @@ El diagrama de paquetes permite organizar el sistema en módulos lógicos, facil
 
 # 3.4.1 Modelo Lógico
 
-![Modelo Lógico (DER)](./Fotos-TFG/Cap%203/Diagrama%20der.png)
+![Modelo Lógico (DER)](../../05-diseno/base-datos/diagrama-der.png)
 
 ---
 
 # 3.4.2 Modelo Físico
 
-![Modelo Físico](./Fotos-TFG/Cap%203/Modelo%20fisico%20bases.png)
+![Modelo Físico](../../05-diseno/base-datos/modelo-fisico.png)
