@@ -1,8 +1,8 @@
 # 03. Casos de uso representativos
 
-## Caso conductor
+## Entrenamiento y seguimiento
 
-El flujo recomendado para la defensa es **crear y entregar un entrenamiento con seguimiento posterior**. Es representativo porque atraviesa todas las capas y demuestra automatización real.
+El proceso de **crear y entregar un entrenamiento con seguimiento posterior** atraviesa todas las capas y reúne las principales automatizaciones de la solución.
 
 [Abrir la explicación completa del caso](crear-entrenamiento.md)
 
@@ -15,7 +15,7 @@ El flujo recomendado para la defensa es **crear y entregar un entrenamiento con 
 | Generar plantilla | [Abrir](diagramas/escenario-generar-plantilla.png) |
 | Seguimiento post-sesión | [Abrir](diagramas/escenario-seguimiento.png) |
 
-## Por qué se elige este caso
+## Valor técnico y funcional
 
 - Parte de una necesidad clínica real.
 - Combina datos de pacientes, profesionales y ejercicios.

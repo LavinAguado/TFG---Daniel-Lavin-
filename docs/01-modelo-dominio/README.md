@@ -27,9 +27,9 @@ El núcleo del sistema es el **paciente**. A su alrededor se organizan la inform
 
 Los UML se conservan como modelos conceptuales originales del TFG. Para consultar todos los atributos, tablas y restricciones de la implementación, la referencia ejecutable es [`backend/src/database/schema.sql`](../../backend/src/database/schema.sql).
 
-## Idea para la exposición
+## Relaciones principales
 
-Presentar primero al paciente como centro del dominio y después explicar dos relaciones:
+El paciente actúa como centro del dominio:
 
 1. Un profesional crea un entrenamiento compuesto por ejercicios.
 2. El paciente registra un seguimiento asociado a ese entrenamiento.

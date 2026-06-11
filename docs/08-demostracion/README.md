@@ -1,41 +1,62 @@
-# 08. Demostración de la solución
+# 08. Aplicación
 
-La demostración debe probar el caso conductor con datos preparados, evitando dedicar tiempo a tareas administrativas secundarias.
+TheraTrack integra en una misma interfaz los módulos clínicos, deportivos y administrativos.
 
-## Recorrido
+## Módulos
 
-1. Iniciar sesión como profesional.
-2. Abrir el directorio y seleccionar un paciente con correo.
-3. Crear un entrenamiento con dos ejercicios.
-4. Mostrar el entrenamiento guardado y descargar su PDF.
-5. Abrir el seguimiento público asociado.
-6. Registrar dolor, esfuerzo y dificultad.
-7. Volver a la ficha del paciente y mostrar el resumen.
+| Módulo | Funcionalidad |
+|---|---|
+| Acceso | Autenticación y control de sesión |
+| Dashboard | Resumen de pacientes y agenda |
+| Pacientes | Expediente clínico y deportivo |
+| Citas | Calendario y asignación de profesionales |
+| Entrenamientos | Planificación y consulta de sesiones |
+| Ejercicios | Catálogo reutilizable |
+| Archivos | Documentación clínica privada |
+| Administración | Gestión de profesionales y roles |
+| Seguimiento | Registro público de evolución post-sesión |
 
-[Abrir el guion detallado](guion-demo.md)
+## Flujo de entrenamiento
 
-[Abrir el recorrido completo de 15 minutos](recorrido-15-minutos.md)
+1. El profesional selecciona un paciente.
+2. Define ejercicios, series, repeticiones y esfuerzo.
+3. El sistema guarda el plan y genera un PDF.
+4. El documento se envía al paciente por correo.
+5. El paciente registra sus sensaciones tras la sesión.
+6. Las métricas quedan disponibles en su expediente.
 
 ## Capturas
 
-| Pantalla | Captura |
-|---|---|
-| Login | [Abrir](capturas/01-login.png) |
-| Dashboard | [Abrir](capturas/02-dashboard.png) |
-| Pacientes | [Abrir](capturas/03-pacientes.png) |
-| Citas | [Abrir](capturas/04-citas.png) |
-| Entrenamientos | [Abrir](capturas/05-entrenamientos.png) |
-| Ejercicios | [Abrir](capturas/06-ejercicios.png) |
-| Archivos | [Abrir](capturas/07-archivos.png) |
-| Administración | [Abrir](capturas/08-administracion.png) |
+### Inicio de sesión
 
-## Plan de contingencia
+![Inicio de sesión](capturas/01-login.png)
 
-Si falla la red, el correo o Supabase:
+### Panel principal
 
-- Utilizar las capturas como evidencia visual.
-- Mostrar el flujo en código y los diagramas de secuencia.
-- Abrir el [PDF de prueba generado por el backend](../../backend/src/tests/test-output.pdf).
-- Explicar qué operación externa falló sin ocultar el resultado local.
+![Panel principal](capturas/02-dashboard.png)
+
+### Directorio de pacientes
+
+![Directorio de pacientes](capturas/03-pacientes.png)
+
+### Agenda de citas
+
+![Agenda de citas](capturas/04-citas.png)
+
+### Entrenamientos
+
+![Entrenamientos](capturas/05-entrenamientos.png)
+
+### Catálogo de ejercicios
+
+![Catálogo de ejercicios](capturas/06-ejercicios.png)
+
+### Repositorio documental
+
+![Repositorio documental](capturas/07-archivos.png)
+
+### Administración de profesionales
+
+![Administración](capturas/08-administracion.png)
 
 [← Código](../07-codigo-fuente/README.md) · [Siguiente: conclusiones →](../09-conclusiones/README.md)

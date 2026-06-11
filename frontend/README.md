@@ -49,7 +49,7 @@ src/
 - `AuthContext.jsx`: persiste, decodifica y elimina el JWT.
 - `services/api.js`: configura Axios y añade `Authorization: Bearer`.
 
-## Caso conductor
+## Flujo de entrenamiento
 
 La creación del entrenamiento comienza en `PacienteDetalle.jsx`. La pantalla obtiene pacientes y ejercicios, construye el payload y llama a `POST /entrenamientos`. El seguimiento se completa posteriormente desde la ruta pública `/seguimiento/:id`.
 
@@ -68,4 +68,4 @@ npm run dev
 
 La aplicación se abre normalmente en `http://localhost:5173` y consume la API en `http://localhost:3001/api`.
 
-[← Portada de la defensa](../README.md) · [Código en el recorrido](../docs/07-codigo-fuente/README.md)
+[← Portada del proyecto](../README.md) · [Trazabilidad del código](../docs/07-codigo-fuente/README.md)

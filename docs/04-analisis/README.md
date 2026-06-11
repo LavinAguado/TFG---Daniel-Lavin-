@@ -24,6 +24,6 @@ La síntesis de requisitos funcionales y no funcionales está disponible en [req
 | Generar y enviar plantilla | [Abrir](actividades/generar-enviar-plantilla.png) |
 | Seguimiento post-sesión | [Abrir](actividades/seguimiento-post-sesion.png) |
 
-Para la exposición se recomienda abrir únicamente **generar y enviar plantilla**, porque muestra la intervención del profesional y las automatizaciones del sistema.
+El proceso **generar y enviar plantilla** muestra la colaboración entre el profesional y las automatizaciones del sistema.
 
 [← Caso representativo](../03-casos-representativos/README.md) · [Siguiente: diseño →](../05-diseno/README.md)

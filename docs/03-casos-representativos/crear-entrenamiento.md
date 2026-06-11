@@ -1,4 +1,4 @@
-# Caso conductor: crear entrenamiento y recoger seguimiento
+# Crear entrenamiento y recoger seguimiento
 
 ## Objetivo
 

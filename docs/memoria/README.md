@@ -1,6 +1,6 @@
 # Memoria original
 
-Los capítulos originales del Trabajo Fin de Grado se conservan como documentación académica extensa. La carpeta `docs/01` a `docs/09` contiene la versión optimizada para la defensa oral.
+Los capítulos originales del Trabajo Fin de Grado se conservan como documentación académica extensa. La documentación técnica estructurada se encuentra en los apartados `01` a `09`.
 
 ## Documento completo
 

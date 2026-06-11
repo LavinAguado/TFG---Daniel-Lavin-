@@ -22,7 +22,7 @@ En la implementación, fisioterapeuta y entrenador son especializaciones funcion
 | CU5 | Enviar entrenamiento | [Abrir](diagramas/cu-05-enviar-entrenamiento.png) |
 | CU6 | Registrar seguimiento | [Abrir](diagramas/cu-06-registrar-seguimiento.png) |
 
-## Caso seleccionado para la defensa
+## Flujo funcional integrado
 
 Los casos CU3, CU4, CU5 y CU6 forman un único recorrido de valor: el profesional prescribe un entrenamiento y obtiene posteriormente información sobre su ejecución.
 

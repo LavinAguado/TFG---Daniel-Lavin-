@@ -11,7 +11,7 @@ El diseño concreta las interacciones entre actores, interfaz, API, servicios y 
 | Generar y enviar plantilla | [Abrir](secuencias/generar-enviar-plantilla.png) |
 | Seguimiento post-sesión | [Abrir](secuencias/seguimiento-post-sesion.png) |
 
-![Secuencia del caso conductor](secuencias/generar-enviar-plantilla.png)
+![Secuencia de generación y envío](secuencias/generar-enviar-plantilla.png)
 
 ## Diseño de base de datos
 
